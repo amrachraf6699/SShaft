@@ -1,0 +1,485 @@
+@if ($multiple_value_services->count() > 0)
+    <section class="causes-page causes-home pt-40 pb-120">
+        <div class="container">
+            <div class="row align-items-start align-items-md-center flex-column flex-md-row mb-60">
+                <div class="col-lg-7">
+                    <div class="block-title">
+                        <p>تبرع الأن</p>
+                        <h3>تبرع لجمعية البر بجدة</h3>
+                    </div><!-- /.block-title -->
+                </div><!-- /.col-lg-7 -->
+                <div class="col-lg-5 d-flex">
+                    <div class="my-auto">
+                        <p class="block-text pr-10 mb-0">
+                            قناة آمنة للتبرع لمشاريع  البر الخيرية المختلفة، ويستفيد منه أكثر من 32000 أسرة محتاجة مابين أيتام وأرامل وفقراء ، من خلال الزكوات والصدقات والوقف الخيري
+                        </p><!-- /.block-text -->
+                    </div><!-- /.my-auto -->
+                </div><!-- /.col-lg-5 -->
+            </div>
+
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab"
+                        aria-controls="home" aria-selected="true">
+                        <i class="fas fa-boxes"></i>
+                        مشاريع الجمعية
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
+                        aria-controls="profile" aria-selected="false">
+                        <i class="fas fa-users"></i>
+                        حالات واردة
+                    </a>
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                    <div class="row justify-content-center">
+                        @foreach ($multiple_value_services as $service)
+                            <div class="col-lg-4 col-md-6 col-12">
+                                <div class="cause-card">
+                                    <span class="cause-type">{{ $service->service_section->title }}</span>
+                                    <div class="cause-card__inner">
+                                        <div class="cause-card__image">
+                                            <img src="{{ $service->image_path }}" alt="{{ $service->title }}">
+                                        </div><!-- /.cause-card__image -->
+                                        <div class="cause-card__content">
+                                            <div class="cause-card__top">
+                                                <div class="cause-card__progress">
+                                                    <span style="width: {{ $service->percent }}%;" class="wow cardProgress" data-wow-duration="1500ms">
+                                                        <b><i>{{ $service->percent }}</i>%</b>
+                                                    </span>
+                                                </div><!-- /.cause-card__progress -->
+                                                <div class="cause-card__goals">
+                                                    <p><strong>تم جمع:</strong> {{ $service->collected_value ? $service->collected_value : 0 . ' ' . __('dashboard.SAR') }}</p>
+                                                    <p><strong>المبلغ المطلوب:</strong> {{ $service->target_value . ' ' . __('dashboard.SAR') }}</p>
+                                                </div><!-- /.cause-card__goals -->
+                                            </div><!-- /.cause-card__top -->
+                                            <h3>
+                                                <a href="{{ route('frontend.services-sections.service.show', [$service->service_section->slug, $service->slug]) }}">{{ $service->title }}</a>
+                                            </h3>
+                                            <form class="service-form" action="{{ route('frontend.service.cart.store', $service->id) }}" method="POST">
+                                                @csrf
+                                                <div class="number-amount">
+                                                    <ul>
+                                                        <li>المبلغ</li>
+                                                        <li>الكمية</li>
+                                                    </ul>
+                                                </div>
+                                                <ul class="radio-btn">
+                                                    @if ($service->price_value === 'multi')
+                                                            <li>
+                                                                <input type="radio" value="{{ $service->multiple_service_value_1 }}" name="amount">
+                                                                <span>{{ $service->multiple_service_value_1 }}</span>
+                                                            </li>
+                                                            <li>
+                                                                <input type="radio" value="{{ $service->multiple_service_value_2 }}" name="amount">
+                                                                <span>{{ $service->multiple_service_value_2 }}</span>
+                                                            </li>
+                                                            <li>
+                                                                <input type="radio" value="{{ $service->multiple_service_value_3 }}" name="amount">
+                                                                <span>{{ $service->multiple_service_value_3 }}</span>
+                                                            </li>
+                                                            {{-- <li class="another-cost">
+                                                                <input type="number" placeholder="10 ر.س">
+                                                                <input type="radio" value="100" name="amount">
+                                                                <span>مبلغ أخر</span>
+                                                            </li> --}}
+                                                            <li class="count">
+                                                                <input type="number" min="1" value="1" name="quantity">
+                                                                <ul>
+                                                                    <li class="add-btn"><i class="fas fa-angle-up"></i></li>
+                                                                    <li class="minus-btn"><i class="fas fa-angle-down"></i></li>
+                                                                </ul>
+                                                            </li>
+                                                    @elseif ($service->price_value === 'fixed')
+                                                        <li class="custom-cost another-cost">
+                                                            <input type="number" min="1" value="{{ $service->basic_service_value }}" name="amount" disabled readonly>
+                                                        </li>
+                                                        <li class="count">
+                                                            <input type="number" min="1" value="1" name="quantity">
+                                                            <ul>
+                                                                <li class="add-btn"><i class="fas fa-angle-up"></i></li>
+                                                                <li class="minus-btn"><i class="fas fa-angle-down"></i></li>
+                                                            </ul>
+                                                        </li>
+                                                    @elseif ($service->price_value === 'variable')
+                                                        <li class="custom-cost another-cost">
+                                                            <input type="number" min="1" value="{{ old('amount') }}" name="amount">
+                                                        </li>
+                                                        <li class="count">
+                                                            <input type="number" min="1" value="1" name="quantity">
+                                                            <ul>
+                                                                <li class="add-btn"><i class="fas fa-angle-up"></i></li>
+                                                                <li class="minus-btn"><i class="fas fa-angle-down"></i></li>
+                                                            </ul>
+                                                        </li>
+                                                    @elseif ($service->price_value === 'percent')
+                                                        <input type="hidden" class="percent" name="percent" value="{{ $service->basic_service_value }}">
+                                                        <li class="custom-cost">
+                                                            <input type="number" min="1" class="totalAmount" value="{{ old('totalAmount') }}" name="totalAmount">
+                                                        </li>
+                                                        <li class="custom-cost another-cost">
+                                                            <input type="number" min="1" value="{{ old('amount') }}" name="amount" class="amount" readonly disabled>
+                                                        </li>
+                                                        <li class="count">
+                                                            <input type="number" min="1" value="1" name="quantity">
+                                                            <ul>
+                                                                <li class="add-btn"><i class="fas fa-angle-up"></i></li>
+                                                                <li class="minus-btn"><i class="fas fa-angle-down"></i></li>
+                                                            </ul>
+                                                        </li>
+                                                    @endif
+                                                </ul>
+                                                @error('amount')<span class="text-danger">{{ $message }}</span>@enderror
+                                                <div class="cause-card__bottom">
+                                                    {{-- <a href="{{ route('frontend.services-sections.service.show', [$service->service_section->slug, $service->slug]) }}" class="thm-btn dynamic-radius">تبرع الان</a> --}}
+
+                                                    <a href="#" data-toggle="modal" data-target="#exampleModal30{{ $service->id }}" class="thm-btn dynamic-radius">تبرع الان</a>
+                                                    <button type="submit" class="cause-card__share add-to-cart" title="إضافة إلى السلة" style="border-color: transparent"><i class="fas fa-shopping-cart"></i></button>
+                                                    <span class="total"></span>
+                                                    <!-- /.cause-card__share -->
+                                                </div><!-- /.cause-card__bottom -->
+                                            </form>
+                                        </div><!-- /.cause-card__content -->
+                                    </div><!-- /.cause-card__inner -->
+                                </div><!-- /.cause-card -->
+                            </div>
+
+                            <div class="modal fade pay-now-modal exampleModal3Model" id="exampleModal30{{ $service->id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content quick-modal">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel"><img src="{{ URL::asset('frontend_files/assets/images/favicon.ico') }}" alt="logo" class="ml-2"> ادفع الآن - <span class="text-muted">{{ $service->title }}</span></h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form id="donateNowForm" action="{{ route('frontend.donate-now.store', $service->id) }}" method="POST">
+                                                @csrf
+
+                                                <input type="hidden" name="service_id" value="{{ $service->id }}">
+
+                                                <div class="form-group quick-amount">
+                                                    @if ($service->price_value === 'fixed' || $service->price_value === 'percent' || $service->price_value === 'multi')
+                                                        <input type="number" name="amount" value="{{ old('amount') }}" class="form-control amountNum" disabled readonly required placeholder="مبلغ التبرع">
+                                                    @else
+                                                        <input type="number" name="amount" value="{{ old('amount') }}" class="form-control amountNum" required placeholder="مبلغ التبرع">
+                                                    @endif
+                                                    <span>ر.س</span>
+                                                    <span id="amount_erro" class="text-danger"></span>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="" class="serv-label">الكمية</label>
+                                                    <input type="number" name="quantity" id="quantityNum" value="{{ old('quantity', 1) }}" class="form-control " min="1" step="1" required>
+                                                    <span id="" class="quantity_error_index text-danger"></span>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="" class="serv-label">القيمة الاجمالية</label>
+                                                    <input type="numper" name="total" id="totalNum" value="{{ old('total') }}" class="form-control" readonly required>
+                                                    <span id="" class="total_amount_error_index text-danger"></span>
+                                                </div>
+
+                                                @guest('donor')
+                                                    <div class="form-group">
+                                                        <label for="" class="serv-label"> رقم الجوال</label>
+                                                        <input type="tel" class="form-control" id="phone_number" name="phone_number" placeholder="@lang('translation.phone_placeholder')">
+                                                        <span id="" class="phoneNumber_error_index text-danger"></span>
+                                                    </div>
+                                                @else
+                                                    <div class="form-group">
+                                                        <input type="hidden" class="form-control" name="phone_number" value="{{ auth('donor')->user()->phone }}">
+                                                    </div>
+                                                @endguest
+
+                                                <div class="form-group">
+                                                    <label>اختر طريقة الدفع:</label>
+                                                    <div class="radio-btns">
+                                                        <div class="radio-box">
+                                                            <input type="radio" name="payment_ways" required value="bank_transfer">
+                                                            <span>
+                                                                <i class="fas fa-coins"></i>
+                                                                تحويل بنكي
+                                                            </span>
+                                                        </div>
+                                                        <div class="radio-box">
+                                                            <input type="radio" name="payment_ways" required value="MADA">
+                                                            <span>
+                                                                <i class="fas fa-money-check"></i>
+                                                                بطاقة مدى
+                                                            </span>
+                                                        </div>
+                                                        <div class="radio-box">
+                                                            <input type="radio" name="payment_ways" required value="VISA MASTER">
+                                                            <span>
+                                                                <i class="fab fa-cc-mastercard"></i>
+                                                                بطاقة إئتمانية
+                                                            </span>
+                                                        </div>
+                                                        {{-- style="display:none;" --}}
+                                                        <div class="radio-box" id="apple-pay">
+                                                            <input type="radio" name="payment_ways" required value="APPLEPAY">
+                                                            <span>
+                                                                <i class="fab fa-apple-pay"></i>
+                                                                Apple pay
+                                                            </span>
+                                                        </div>
+                                                        @error('payment_ways')<span class="text-danger">{{ $message }}</span>@enderror
+                                                    </div><!-- /.form-control -->
+                                                    {{-- <small>في حالة التحويل البنكي ولاتمام العملية قم بارفاق إيصال السداد وبيانات البنك من صفحة الفواتير</small> --}}
+                                                    <span id="" class="payment_brand_error_index text-danger"></span>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <input type="submit" id="ckeckout" class="form-control confirm" value="ادفع الآن">
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                    <div class="row justify-content-center">
+                        @foreach ($beneficiaries as $beneficiary)
+                            <div class="col-lg-4 col-md-6 col-12">
+                                <div class="cause-card">
+                                    <span class="cause-type">{{ $beneficiary->service_section->title }}</span>
+                                    <div class="cause-card__inner">
+                                        <div class="cause-card__image">
+                                            <img src="{{ $beneficiary->image_path }}" alt="{{ $beneficiary->title }}">
+                                        </div><!-- /.cause-card__image -->
+                                        <div class="cause-card__content">
+                                            <div class="cause-card__top">
+                                                <div class="cause-card__progress">
+                                                    <span style="width: {{ $beneficiary->percent }}%;" class="wow cardProgress" data-wow-duration="1500ms">
+                                                        <b><i>{{ $beneficiary->percent }}</i>%</b>
+                                                    </span>
+                                                </div><!-- /.cause-card__progress -->
+                                                <div class="cause-card__goals">
+                                                    <p><strong>تم جمع:</strong> {{ $beneficiary->collected_value ? $beneficiary->collected_value : 0 . ' ' . __('dashboard.SAR') }}</p>
+                                                    <p><strong>المبلغ المطلوب:</strong> {{ $beneficiary->target_value . ' ' . __('dashboard.SAR') }}</p>
+                                                </div><!-- /.cause-card__goals -->
+                                            </div><!-- /.cause-card__top -->
+                                            <h3>
+                                                <a href="{{ route('frontend.beneficiaries-requests.details', [$beneficiary->service_section->slug, $beneficiary->slug]) }}">{{ $beneficiary->title }}</a>
+                                            </h3>
+                                            <form class="service-form" action="" method="POST">
+                                                @csrf
+                                                <div class="number-amount">
+                                                    <ul>
+                                                        <li>المبلغ</li>
+                                                        <li>الكمية</li>
+                                                    </ul>
+                                                </div>
+                                                <ul class="radio-btn">
+                                                    @if ($beneficiary->price_value === 'multi')
+                                                            <li>
+                                                                <input type="radio" value="{{ $beneficiary->multiple_service_value_1 }}" name="amount">
+                                                                <span>{{ $beneficiary->multiple_service_value_1 }}</span>
+                                                            </li>
+                                                            <li>
+                                                                <input type="radio" value="{{ $beneficiary->multiple_service_value_2 }}" name="amount">
+                                                                <span>{{ $beneficiary->multiple_service_value_2 }}</span>
+                                                            </li>
+                                                            <li>
+                                                                <input type="radio" value="{{ $beneficiary->multiple_service_value_3 }}" name="amount">
+                                                                <span>{{ $beneficiary->multiple_service_value_3 }}</span>
+                                                            </li>
+                                                            {{-- <li class="another-cost">
+                                                                <input type="number" placeholder="10 ر.س">
+                                                                <input type="radio" value="100" name="amount">
+                                                                <span>مبلغ أخر</span>
+                                                            </li> --}}
+                                                            <li class="count">
+                                                                <input type="number" min="1" value="1" name="quantity">
+                                                                <ul>
+                                                                    <li class="add-btn"><i class="fas fa-angle-up"></i></li>
+                                                                    <li class="minus-btn"><i class="fas fa-angle-down"></i></li>
+                                                                </ul>
+                                                            </li>
+                                                    @elseif ($beneficiary->price_value === 'fixed')
+                                                        <li class="custom-cost another-cost">
+                                                            <input type="number" min="1" value="{{ $beneficiary->basic_service_value }}" name="amount" disabled readonly>
+                                                        </li>
+                                                        <li class="count">
+                                                            <input type="number" min="1" value="1" name="quantity">
+                                                            <ul>
+                                                                <li class="add-btn"><i class="fas fa-angle-up"></i></li>
+                                                                <li class="minus-btn"><i class="fas fa-angle-down"></i></li>
+                                                            </ul>
+                                                        </li>
+                                                    @elseif ($beneficiary->price_value === 'variable')
+                                                        <li class="custom-cost another-cost">
+                                                            <input type="number" min="1" value="{{ old('amount') }}" name="amount">
+                                                        </li>
+                                                        <li class="count">
+                                                            <input type="number" min="1" value="1" name="quantity">
+                                                            <ul>
+                                                                <li class="add-btn"><i class="fas fa-angle-up"></i></li>
+                                                                <li class="minus-btn"><i class="fas fa-angle-down"></i></li>
+                                                            </ul>
+                                                        </li>
+                                                    @elseif ($beneficiary->price_value === 'percent')
+                                                        <input type="hidden" class="percent" name="percent" value="{{ $beneficiary->basic_service_value }}">
+                                                        <li class="custom-cost">
+                                                            <input type="number" min="1" class="totalAmount" value="{{ old('totalAmount') }}" name="totalAmount">
+                                                        </li>
+                                                        <li class="custom-cost another-cost">
+                                                            <input type="number" min="1" value="{{ old('amount') }}" name="amount" class="amount" readonly disabled>
+                                                        </li>
+                                                        <li class="count">
+                                                            <input type="number" min="1" value="1" name="quantity">
+                                                            <ul>
+                                                                <li class="add-btn"><i class="fas fa-angle-up"></i></li>
+                                                                <li class="minus-btn"><i class="fas fa-angle-down"></i></li>
+                                                            </ul>
+                                                        </li>
+                                                    @endif
+                                                </ul>
+                                                @error('amount')<span class="text-danger">{{ $message }}</span>@enderror
+                                                <div class="cause-card__bottom">
+                                                    {{-- <a href="{{ route('frontend.services-sections.service.show', [$beneficiary->service_section->slug, $beneficiary->slug]) }}" class="thm-btn dynamic-radius">تبرع الان</a> --}}
+
+                                                    <a href="#" data-toggle="modal" data-target="#exampleModal300{{ $beneficiary->id }}" class="thm-btn dynamic-radius">تبرع الان</a>
+                                                    {{-- <button type="submit" class="cause-card__share add-to-cart" title="إضافة إلى السلة" style="border-color: transparent"><i class="fas fa-shopping-cart"></i></button> --}}
+                                                    <span class="total"></span>
+                                                    <!-- /.cause-card__share -->
+                                                </div><!-- /.cause-card__bottom -->
+                                            </form>
+                                        </div><!-- /.cause-card__content -->
+                                    </div><!-- /.cause-card__inner -->
+                                </div><!-- /.cause-card -->
+                            </div>
+
+                            <div class="modal fade pay-now-modal exampleModal3Model" id="exampleModal300{{ $beneficiary->id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content quick-modal">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel"><img src="{{ URL::asset('frontend_files/assets/images/favicon.ico') }}" alt="logo" class="ml-2"> ادفع الآن - <span class="text-muted">{{ $beneficiary->title }}</span></h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form id="donateNowForm" action="{{ route('frontend.donate-now.store', $beneficiary->id) }}" method="POST">
+                                                @csrf
+
+                                                <input type="hidden" name="beneficiary_id" value="{{ $beneficiary->id }}">
+
+                                                <div class="form-group quick-amount">
+                                                    @if ($beneficiary->price_value === 'fixed' || $beneficiary->price_value === 'percent' || $beneficiary->price_value === 'multi')
+                                                        <input type="number" name="amount" value="{{ old('amount') }}" class="form-control amountNum" disabled readonly required placeholder="مبلغ التبرع">
+                                                    @else
+                                                        <input type="number" name="amount" value="{{ old('amount') }}" class="form-control amountNum" required placeholder="مبلغ التبرع">
+                                                    @endif
+                                                    <span>ر.س</span>
+                                                    <span id="amount_erro" class="text-danger"></span>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="" class="serv-label">الكمية</label>
+                                                    <input type="number" name="quantity" id="quantityNum" value="{{ old('quantity', 1) }}" class="form-control " min="1" step="1" required>
+                                                    <span id="" class="quantity_error_index text-danger"></span>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="" class="serv-label">القيمة الاجمالية</label>
+                                                    <input type="numper" name="total" id="totalNum" value="{{ old('total') }}" class="form-control" readonly required>
+                                                    <span id="" class="total_amount_error_index text-danger"></span>
+                                                </div>
+
+                                                @guest('donor')
+                                                    <div class="form-group">
+                                                        <label for="" class="serv-label"> رقم الجوال</label>
+                                                        <input type="tel" class="form-control" id="phone_number" name="phone_number" placeholder="@lang('translation.phone_placeholder')">
+                                                        <span id="" class="phoneNumber_error_index text-danger"></span>
+                                                    </div>
+                                                @else
+                                                    <div class="form-group">
+                                                        <input type="hidden" class="form-control" name="phone_number" value="{{ auth('donor')->user()->phone }}">
+                                                    </div>
+                                                @endguest
+
+                                                <div class="form-group">
+                                                    <label>اختر طريقة الدفع:</label>
+                                                    <div class="radio-btns">
+                                                        <div class="radio-box">
+                                                            <input type="radio" name="payment_ways" required value="bank_transfer">
+                                                            <span>
+                                                                <i class="fas fa-coins"></i>
+                                                                تحويل بنكي
+                                                            </span>
+                                                        </div>
+                                                        <div class="radio-box">
+                                                            <input type="radio" name="payment_ways" required value="MADA">
+                                                            <span>
+                                                                <i class="fas fa-money-check"></i>
+                                                                بطاقة مدى
+                                                            </span>
+                                                        </div>
+                                                        <div class="radio-box">
+                                                            <input type="radio" name="payment_ways" required value="VISA MASTER">
+                                                            <span>
+                                                                <i class="fab fa-cc-mastercard"></i>
+                                                                بطاقة إئتمانية
+                                                            </span>
+                                                        </div>
+                                                        {{-- style="display:none;" --}}
+                                                        <div class="radio-box" id="apple-pay">
+                                                            <input type="radio" name="payment_ways" required value="APPLEPAY">
+                                                            <span>
+                                                                <i class="fab fa-apple-pay"></i>
+                                                                Apple pay
+                                                            </span>
+                                                        </div>
+                                                        @error('payment_ways')<span class="text-danger">{{ $message }}</span>@enderror
+                                                    </div><!-- /.form-control -->
+                                                    {{-- <small>في حالة التحويل البنكي ولاتمام العملية قم بارفاق إيصال السداد وبيانات البنك من صفحة الفواتير</small> --}}
+                                                    <span id="" class="payment_brand_error_index text-danger"></span>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <input type="submit" id="ckeckoutBeneficiary" class="form-control confirm" value="ادفع الآن">
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+
+
+        </div><!-- /.container -->
+    </section>
+
+    <!-- Modal -->
+    <div class="modal fade" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">
+                        <h2 class="text-center col-12"> <img src="{{ URL::asset('frontend_files/assets/images/favicon.ico') }}" alt="logo" class="ml-2">دفع مبلغ <strong id="t_amount"></strong> ريال سعودي</h2>
+                    </h5>
+                </div>
+                <div class="modal-body">
+                    <div id="showPayForm"></div>
+                </div>
+
+                <div class="modal-footer"><button type="button" class="btn btn-secondary"
+                    data-dismiss="modal">{{ __('dashboard.close') }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+@endif
