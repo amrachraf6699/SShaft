@@ -95,14 +95,14 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             {!! Form::label('logo', trans('dashboard.logo')) !!}
-                                            <p class="text-danger">* صيغة المرفق  jpeg ,.jpg , png </p>
+                                            <p class="text-danger">* {{ trans('dashboard.accepted_formats') }} jpeg ,.jpg , png </p>
                                             <br>
                                             <input type="file" name="logo" class="dropify" data-default-file="{{ $setting->logo_path }}" accept=".jpg, .png, image/jpeg, image/png" data-height="70" />
                                             @error('logo')<span class="text-danger">{{ $message }}</span>@enderror
                                         </div>
                                         <div class="col-md-6">
                                             {!! Form::label('fav', trans('dashboard.fav')) !!}
-                                            <p class="text-danger">* صيغة المرفق  jpeg ,.jpg , png </p>
+                                            <p class="text-danger">* {{ trans('dashboard.accepted_formats') }} jpeg ,.jpg , png </p>
                                             <br>
                                             <input type="file" name="fav" class="dropify" data-default-file="{{ $setting->fav_path }}" accept=".jpg, .png, image/jpeg, image/png" data-height="70" />
                                             @error('fav')<span class="text-danger">{{ $message }}</span>@enderror
@@ -129,7 +129,7 @@
 
                                 <form action="{{ route('dashboard.settings.template_mail_update') }}" method="POST" enctype="multipart/form-data">
                                     @csrf
-                                    @method('PUT')
+                                    @method('POST')
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="form-group">
@@ -157,7 +157,7 @@
                     <!--/div-->
                 </div>
                 <!-- row closed -->
-                
+
                 <!-- row -->
                 <div class="row">
                     <div class="col-xl-12">
@@ -444,7 +444,7 @@
                     <!--/div-->
                 </div>
                 <!-- row closed -->
-                
+
                 <!-- row -->
                 {{-- <div class="row">
                     <div class="col-xl-12">
@@ -473,13 +473,19 @@
                     <!--/div-->
                 </div> --}}
                 <!-- row closed -->
-                
+
                 @if (request()->query('advanced'))
                 <div class="row">
                     <div class="col-xl-12">
                         <div class="card card-primary">
                             <div class="card-body">
-                                <div class="mb-4 main-content-label">@lang('dashboard.advanced_settings')</div>
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <div class="main-content-label">@lang('dashboard.advanced_settings')</div>
+                                    <span class="badge badge-primary" style="background-color: #007bff;">
+                                        @lang('dashboard.last_online_at'): 
+                                        {{ $setting->last_online_at ? Carbon\Carbon::parse($setting->last_online_at)->diffForHumans() : 'N/A' }}
+                                    </span>
+                                </div>
                                 {!! Form::open(['route' => 'dashboard.settings.updateAdvancedSettings', 'method' => 'post']) !!}
                                     @csrf
                                     <div class="row">
@@ -523,10 +529,27 @@
                                             </div>
                                         </div>
 
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                {!! Form::label('quick_donations', trans('dashboard.quick_donations')) !!}
+                                                <div>
+                                                    <label>
+                                                        {!! Form::radio('quick_donations', 1, $setting->quick_donations == 1) !!}
+                                                        @lang('dashboard.enabled')
+                                                    </label>
+                                                    <label>
+                                                        {!! Form::radio('quick_donations', 0, $setting->quick_donations == 0) !!}
+                                                        @lang('dashboard.disabled')
+                                                    </label>
+                                                </div>
+                                                @error('quick_donations')<span class="text-danger">{{ $message }}</span>@enderror
+                                            </div>
+                                        </div>
+
                                         <div class="col-md-12">
                                             <div class="form-group">
                                                 {!! Form::label('nearpay', trans('dashboard.nearpay_settings')) !!}
-                                        
+
                                                 @php
                                                     // Decode nearpay column or set default values if null
                                                     $nearpay = $setting->nearpay ? json_decode($setting->nearpay, true) : [
@@ -537,7 +560,7 @@
                                                         'env' => 'sandbox',
                                                     ];
                                                 @endphp
-                                        
+
                                                 <div class="col-md-12">
                                                     <div class="form-group">
                                                         {!! Form::label('nearpay.enableReceiptUi', trans('dashboard.enable_receipt_ui')) !!}
@@ -554,25 +577,25 @@
                                                         @error('nearpay.enableReceiptUi')<span class="text-danger">{{ $message }}</span>@enderror
                                                     </div>
                                                 </div>
-                                        
+
                                                 <div>
                                                     {!! Form::label('nearpay.finishTimeout', trans('dashboard.finish_timeout')) !!}
                                                     {!! Form::number('nearpay[finishTimeout]', $nearpay['finishTimeout'] ?? 0, ['class' => 'form-control']) !!}
                                                     @error('nearpay.finishTimeout')<span class="text-danger">{{ $message }}</span>@enderror
                                                 </div>
-                                        
+
                                                 <div>
                                                     {!! Form::label('nearpay.authType', trans('dashboard.auth_type')) !!}
                                                     {!! Form::select('nearpay[authType]', ['email' => 'Email', 'mobile' => 'Mobile', 'jwt' => 'JWT'], $nearpay['authType'] ?? '', ['class' => 'form-control']) !!}
                                                     @error('nearpay.authType')<span class="text-danger">{{ $message }}</span>@enderror
                                                 </div>
-                                        
+
                                                 <div>
                                                     {!! Form::label('nearpay.authValue', trans('dashboard.auth_value')) !!}
                                                     {!! Form::text('nearpay[authValue]', $nearpay['authValue'] ?? '', ['class' => 'form-control']) !!}
                                                     @error('nearpay.authValue')<span class="text-danger">{{ $message }}</span>@enderror
                                                 </div>
-                                        
+
                                                 <div>
                                                     {!! Form::label('nearpay.env', trans('dashboard.env')) !!}
                                                     {!! Form::select('nearpay[env]', ['sandbox' => 'Sandbox', 'production' => 'Production'], $nearpay['env'] ?? 'sandbox', ['class' => 'form-control']) !!}
@@ -622,7 +645,7 @@
                 ['view', ['fullscreen', 'codeview', 'help']]
             ]
         });
-        
+
         $('.select2').select2({
             placeholder: '@lang('dashboard.category_select')',
         });

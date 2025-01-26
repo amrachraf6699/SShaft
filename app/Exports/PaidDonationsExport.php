@@ -13,14 +13,14 @@ use Maatwebsite\Excel\Concerns\WithColumnWidths;
 
 class PaidDonationsExport implements FromCollection, WithMapping, WithHeadings, WithColumnWidths
 {
-    
+
     protected $keyword;
     protected $branchId;
     protected $serviceId;
     protected $paymentWays;
     protected $sortBy;
     protected $orderBy;
-    
+
     public function __construct($keyword, $branchId, $serviceId, $paymentWays, $sortBy, $orderBy)
     {
         $this->keyword = $keyword;
@@ -30,8 +30,8 @@ class PaidDonationsExport implements FromCollection, WithMapping, WithHeadings, 
         $this->sortBy = $sortBy;
         $this->orderBy = $orderBy;
     }
-    
-    
+
+
     /**
     * @return \Illuminate\Support\Collection
     */
@@ -87,7 +87,7 @@ class PaidDonationsExport implements FromCollection, WithMapping, WithHeadings, 
             Branch::find($donation->branch_id)->name ?? '-',
             $donation->payment_ways == 'bank_transfer' ? $donation->bank_name : '-',
             json_decode($donation->response)->rrn ?? '-',
-            $donation->created_at->format('Y-m-d'),
+            $donation->created_at ? $donation->created_at->format('Y-m-d') : '-',
         ];
     }
 
@@ -99,14 +99,14 @@ class PaidDonationsExport implements FromCollection, WithMapping, WithHeadings, 
             __('dashboard.phone'),
             __('translation.services'),
             __('translation.donation_code'),
-            __('dashboard.total_amount'),
+            __('dashboard.total_price'),
             __('translation.donation_type'),
             __('dashboard.status'),
             __('translation.payment_ways'),
             __('translation.payment_brand'),
-            __('الفرع'),
+            __('dashboard.branch'),
             __('translation.bank_name'),
-            __('رقم التحويل'),
+            __('dashboard.rrn'),
             __('dashboard.created_at'),
         ];
     }

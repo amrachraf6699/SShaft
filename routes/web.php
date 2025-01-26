@@ -89,7 +89,7 @@ Route::name('frontend.')->middleware(['donor.activated', 'maintenance'])->namesp
     // MODULES
     Route::get('/modules-section/{slug}', 'PageController@viewModulesSection')->name('section.modules.show');
     Route::get('/modules/{section_slug}/show/{module_slug}', 'PageController@viewModules')->name('modules.show');
-    
+
     // INAUGURATION
     Route::get('/inauguration', 'PageController@inauguration')->name('inauguration.index');
 
@@ -127,7 +127,7 @@ Route::name('frontend.')->middleware(['donor.activated', 'maintenance'])->namesp
     Route::post('/donations/bank-transfer/{donation_code}', 'DonationController@storeBankTransfer')->name('donations.bank-transfer.store');
     Route::get('/donations/credit-card/{donation_code}&payment_brand={payment_brand}', 'PaymentController@viewCreditCard')->name('donations.credit-card.view');
     Route::post('/donations/credit-card/{donation_code}', 'PaymentController@storeCreditCard')->name('donations.credit-card.store');
-    
+
     // Pay general assembly members
     Route::get('/pay-general-assembly-members/{membership_no}/choose-payment-method/{invoice_no}', 'PayGeneralAssemblyMemberController@viewChoosePaymentMethod')->name('pay-general-assembly-members.choose-payment-method.view');
     Route::post('/pay-general-assembly-members/{membership_no}/choose-payment-method/{invoice_no}', 'PayGeneralAssemblyMemberController@storeChoosePaymentMethod')->name('pay-general-assembly-members.choose-payment-method.store');
@@ -137,7 +137,7 @@ Route::name('frontend.')->middleware(['donor.activated', 'maintenance'])->namesp
 
     // Unsubscribe Newsletter
     Route::get('/unsubscribe-newsletter/email={email}&username={username}', 'HomeController@unsubscribeNewsletter')->name('unsubscribe-newsletter.unsubscribe');
-    
+
     // Marketers
     Route::get('/marketers/{username}', 'MarketerController@index')->name('marketers.index');
     Route::get('/marketers-service-check-out/{username}', 'PaymentProviderController@getMarketersServiceCheckout')->name('marketers.service.check-out');

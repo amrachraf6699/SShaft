@@ -152,6 +152,7 @@ return [
 
     'invoice_date'                      => 'تاريخ الفاتورة',
     'donations'                         => 'التبرعات',
+    'create_donation'                  => 'إنشاء تبرع',
     'paid_donations'                    => 'تبرعات مدفوعة',
     'unpaid_donations'                  => 'تبرعات غير مدفوعة',
     'verification_donations'            => 'تبرعات بإنتظار التحقق',

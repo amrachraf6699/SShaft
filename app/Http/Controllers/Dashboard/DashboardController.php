@@ -19,11 +19,13 @@ class DashboardController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware(['auth']);
     }
 
     public function index()
     {
+
+
         $count_general_assembly_members = GeneralAssemblyMember::count();
         $count_donors                   = Donor::count();
         $count_services                 = Service::count();
@@ -68,38 +70,32 @@ class DashboardController extends Controller
                 ));
     }
 
-    public function editAdmin($id)
+    public function editAdmin()
     {
-        $id = auth()->user()->id;
-        $admin = User::whereId($id)->first();
-        if ($admin && $admin->id == $id) {
-            return view('dashboard.admin.edit', compact('admin'));
-        }
-        return redirect()->back();
+        $admin = auth()->user();
+        return view('dashboard.admin.edit', compact('admin'));
     }
 
-    public function updateAdmin(Request $request, $id)
+    public function updateAdmin(Request $request)
     {
         $request->validate([
-            'name'                  =>  'required|min:3',
-            'email'                 =>  'required|email|max:255|unique:users,email,'.$id,
-            'password'              =>  'nullable|same:confirm_password|min:6',
+            'name'                  => 'required|min:3',
+            'email'                 => 'required|email|max:255|unique:users,email,' . auth()->id(),
+            'password'              => 'nullable|same:confirm_password|min:6',
         ]);
 
-        $id = auth()->user()->id;
-        $admin = User::whereId($id)->first();
+        $data = $request->except(['_token', 'confirm_password']);
 
-        if ($admin && $admin->id == $id) {
-            $data['name']         =   $request->name;
-            $data['email']        =   $request->email;
-            if (trim($request->password) != '') {
-                $data['password'] = bcrypt($request->password);
-            }
-            $admin->update($data);
-            session()->flash('success', __('dashboard.updated_successfully'));
-            return redirect()->back();
+        if ($request->filled('password')) {
+            $data['password'] = bcrypt($request->password);
+        }else {
+            unset($data['password']);
         }
-        return redirect()->route('dashboard.welcome');
+
+        auth()->user()->update($data);
+
+        session()->flash('success', __('dashboard.updated_successfully'));
+        return redirect()->back();
     }
 
     public function lang($locale)
@@ -108,7 +104,18 @@ class DashboardController extends Controller
         session()->put('locale', $locale);
         return redirect()->back();
     }
-    
+
+    public function switchLang($lang)
+    {
+        $supportedLanguages = ['ar', 'en'];
+        if (!in_array($lang, $supportedLanguages)) {
+            $lang = 'ar';
+        }
+
+        session()->put('language', $lang);
+
+        return redirect()->back()->with('success', __('dashboard.language_switched'));
+    }
     public function generalSearch()
     {
         $keyword        = (isset(request()->keyword) && request()->keyword != '') ? request()->keyword : null;
@@ -130,7 +137,7 @@ class DashboardController extends Controller
         $services = Service::orderBy('id', 'DESC')->pluck('title', 'id');
         return view('dashboard.research-results', compact('donations', 'services'));
     }
-    
+
     public function indexAppNotifications()
     {
         return view('dashboard.app-notifications');

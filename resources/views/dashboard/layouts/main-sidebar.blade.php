@@ -53,7 +53,7 @@
                     @endif
 
                     @if (auth()->user()->hasPermission('read_donations'))
-                    
+
                         <!--<li class="slide">-->
                         <!--    <a class="side-menu__item" href="{{ route('dashboard.paid-donations.index') }}">-->
                         <!--        <i class="las la-hand-holding-heart la-2x ml-2"></i>-->
@@ -67,9 +67,9 @@
                                 <i class="angle fe fe-chevron-down"></i>
                             </a>
                             <ul class="slide-menu">
-                                <li><a class="slide-item" href="{{ route('dashboard.paid-donations.create') }}">{{ __('إنشاء تبرع') }}</a></li>
+                                <li><a class="slide-item" href="{{ route('dashboard.paid-donations.create') }}">{{ __('translation.create_donation') }}</a></li>
                                 <li><a class="slide-item" href="{{ route('dashboard.paid-donations.index') }}">{{ __('translation.donations') }}</a></li>
-                                <li><a class="slide-item" href="{{ route('dashboard.unpaid-donations.index') }}">{{ __('التبرعات الغير مدفوعة') }}</a></li>                            </ul>
+                                <li><a class="slide-item" href="{{ route('dashboard.unpaid-donations.index') }}">{{ __('translation.unpaid_donations') }}</a></li>                            </ul>
                         </li>
                     @endif
 

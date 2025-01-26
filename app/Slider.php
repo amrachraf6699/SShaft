@@ -10,7 +10,7 @@ class Slider extends Model
     use SearchableTrait;
 
     protected $fillable = [
-        'title', 'button', 'url', 'status', 'quick_donation', 'service_id', 'img', 'type'
+        'title', 'button', 'url', 'status', 'quick_donation', 'service_id', 'img', 'type', 'branch_id'
     ];
 
     protected $searchable = [

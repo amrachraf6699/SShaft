@@ -16,9 +16,9 @@ class SettingResource extends JsonResource
     public function toArray($request)
     {
         $branch = Branch::where('id', request()->branch_id)->first();
-        $nearpay = json_decode($this->nearpay);
-        $nearpay->enableReceiptUi = $nearpay->enableReceiptUi ===  1;
-        
+        $nearpay = json_decode(request()->branch_id && $branch ? $branch->nearpay : $this->nearpay);
+        $nearpay->enableReceiptUi = $nearpay->enableReceiptUi && $nearpay->enableReceiptUi == true ? true : false;
+
         return [
             'phone'                 => $this->phone,
             'email'                 => $this->email,
@@ -43,10 +43,12 @@ class SettingResource extends JsonResource
             'sms_token'             => $this->sms_token,
             'sms_sender'            => $this->sms_sender,
             'paymentGateWay'        => (request()->branch_id && $branch) ? $branch->paymentGateWay : $this->paymentGateWay,
-            'is_refresh'            => $this->is_refresh === 1,
-            'refresh_time'          => $this->refresh_time,
-            'pinned_mode'           => $this->pinned_mode === 1,
+            'is_refresh'            => (request()->branch_id && $branch) ? $branch->is_refresh : $this->is_refresh,
+            'refresh_time'          => (request()->branch_id && $branch) ? $branch->refresh_time : $this->refresh_time,
+            'pinned_mode'           => (request()->branch_id && $branch) ? $branch->pinned_mode : $this->pinned_mode,
+            'quick_donations'       => (request()->branch_id && $branch) ? $branch->quick_donations : $this->quick_donations,
             'nearpay'               => $nearpay,
+
         ];
     }
 }

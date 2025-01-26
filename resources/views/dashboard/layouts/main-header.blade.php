@@ -35,8 +35,9 @@
 											</div>
 										</div>
 									</div>
-									<a class="dropdown-item" href="{{ route('dashboard.admin.edit', auth()->user()->id) }}"><i class="bx bx-cog"></i> @lang('dashboard.edit_profile')</a>
+									<a class="dropdown-item" href="{{ route('dashboard.admin.edit') }}"><i class="bx bx-cog"></i> @lang('dashboard.edit_profile')</a>
 									<a class="dropdown-item" href="{{ route('frontend.home') }}"><i class="bx bx-arrow-back"></i> @lang('dashboard.go_to_site')</a>
+                                    <a class="dropdown-item" href="{{ route('dashboard.switchLang', app()->getLocale() == 'en' ? 'ar' : 'en') }}"><i class="bx bx-world"></i> @lang('dashboard.switch_language')</a>
                                     <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();document.getElementById('logout-form').submit();"><i class="bx bx-log-out"></i>@lang('dashboard.logout')</a>
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                         @csrf

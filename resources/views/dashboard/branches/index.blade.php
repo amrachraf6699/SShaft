@@ -40,6 +40,7 @@
                                                 <th class="py-2">{{ __('dashboard.name') }}</th>
                                                 <th class="py-2">{{ __('dashboard.status') }}</th>
                                                 <th class="py-2">{{ __('dashboard.created_at') }}</th>
+                                                <th class="py-2">{{ __('dashboard.last_online_at') }}</th>
                                                 <th class="py-2">{{ __('dashboard.action') }}</th>
                                             </tr>
                                         </thead>
@@ -56,6 +57,26 @@
                                                         @endif
                                                     </td>
                                                     <td>{{ $branch->created_at->format('M d, Y') }}</td>
+                                                    <td>
+                                                        @if($branch->last_online_at)
+                                                            {{ Carbon\Carbon::parse($branch->last_online_at)->format('M d, Y (H:i:s)') }} -
+                                                            {{ Carbon\Carbon::parse($branch->last_online_at)->diffForHumans() }}
+
+                                                            @php
+                                                                $lastOnline = Carbon\Carbon::parse($branch->last_online_at);
+                                                                $timeDifference = Carbon\Carbon::now()->diffInSeconds($lastOnline);
+                                                            @endphp
+
+                                                            @if($timeDifference <= $branch->refresh_time)
+                                                                <i class="text-success las la-check-circle la-2x"></i>
+                                                            @else
+                                                                <i class="text-warning las la-times-circle la-2x"></i>
+                                                            @endif
+                                                        @else
+                                                            N/A
+                                                        @endif
+                                                    </td>
+                                                    </td>
                                                     <td>
                                                         <div class="btn-icon-list">
                                                             {{-- branch edit --}}

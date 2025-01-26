@@ -29,7 +29,7 @@ class Service extends Model
     ];
 
     protected $appends = ['image_path', 'percent', 'icon_app', 'cover_path'];
-    
+
     public function getCoverPathAttribute()
     {
         return asset('storage/uploads/services/' . $this->cover);

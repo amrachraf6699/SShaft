@@ -88,7 +88,7 @@
                                                                 <a href="{{ $donation->transfer_receipt }}" target="_blank" class="btn btn-purple btn-icon"><i class="las la-link"></i></a>
                                                             @endif
                                                             <a href="{{ route('dashboard.paid-donations.edit', $donation->id) }}" class="btn btn-primary btn-icon"><i class="typcn typcn-pencil"></i></a>
-                                                            
+
                                                             {{-- donation delete --}}
                                                             <form action="{{ route('dashboard.paid-donations.destroy', $donation->id) }}" method="post" style="display: inline-block">
                                                                 @csrf

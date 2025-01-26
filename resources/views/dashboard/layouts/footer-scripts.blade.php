@@ -50,10 +50,10 @@
                 type: "info",
                 killer: true,
                 buttons: [
-                    Noty.button("نعم", 'btn btn-danger mr-2', function () {
+                    Noty.button("{{ __('dashboard.yes') }}", 'btn btn-danger mr-2', function () {
                         that.closest('form').submit();
                     }),
-                    Noty.button("لا", 'btn btn-primary mr-2', function () {
+                    Noty.button("{{ __('dashboard.no') }}", 'btn btn-primary mr-2', function () {
                         n.close();
                     })
                 ]

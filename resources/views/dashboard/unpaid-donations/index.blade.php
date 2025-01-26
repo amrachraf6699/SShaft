@@ -46,6 +46,7 @@
                                                 <th class="py-2">{{ __('translation.donation_type') }}</th>
                                                 <th class="py-2">{{ __('dashboard.status') }}</th>
                                                 <th class="py-2">{{ __('dashboard.created_at') }}</th>
+                                                <th class="py-2">{{ __('dashboard.payment_gateway_response') }}</th>
                                                 <th class="py-2">{{ __('dashboard.action') }}</th>
                                             </tr>
                                         </thead>
@@ -53,7 +54,7 @@
                                             @foreach ($donations as $donation)
                                                 <tr>
                                                     <td><input type="checkbox" value="{{$donation->id}}" class="box1"></td>
-                                                    <td>{{ $donation->donor->membership_no ?? __('translation.null') }} <br /> <span dir="ltr">{{ json_decode($donation->response)->rrn ?? $donation->response }}</span> <br /> <span>{{ App\Branch::find($donation->branch_id)->name ?? '' }}</span></td>
+                                                    <td>{{ $donation->donor->membership_no ?? __('translation.null') }} <br /> <span>{{ App\Branch::find($donation->branch_id)->name ?? '' }}</span></td>
                                                     <td>{{ $donation->total_amount }}</td>
                                                     <td>{{ __('translation.' . $donation->payment_ways) }}</td>
                                                     <td>
@@ -75,6 +76,9 @@
                                                         @endif
                                                     </td>
                                                     <td>{{ $donation->created_at->format('M d, Y') }}</td>
+                                                    <td>
+                                                        <span dir="ltr">{{ Str::limit(json_decode($donation->response)->rrn ?? $donation->response , 50) }}</span>
+                                                    </td>
                                                     <td>
                                                         <div class="btn-icon-list">
                                                             <a href="{{ route('donation-invoice.show', $donation->donation_code) }}" target="_blank" class="btn btn-info btn-icon"><i class="typcn typcn-eye-outline"></i></a>

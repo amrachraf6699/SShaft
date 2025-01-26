@@ -49,10 +49,10 @@ class DonationController extends Controller
         if ($validator->fails()) {
             return response()->api(null, 200, true, $validator->errors()->first());
         }
-        
+
         $succ_msg = 'تم عملية الدفع بنجاح, الرجاء الإنتظار';
         $fail_msg = 'عملية مرفوضة, الرجاء المحاولة مرة اخرى';
-        
+
         $service    = Service::orderBy('id', 'DESC')->whereId($request->service_id)
                                 ->active()->with('service_section')->first();
         if ($service && $service->service_section->status === 'active') {
@@ -66,7 +66,7 @@ class DonationController extends Controller
                 $status = 'unpaid';
                 $total_amount = is_numeric((float) str_replace(',', '', $request->total_amount)) ? (float) str_replace(',', '', $request->total_amount) : 0;
             }
-            
+
             $request->merge([
                 'status' => $status,
                 'total_amount' => $total_amount
@@ -86,14 +86,14 @@ class DonationController extends Controller
                         $donation->branch_id        = $request->branch_id;
                         $donation->response         = $request->response;
                         $donation->save();
-        
+
                         $donation_service               = new DonationService();
                         $donation_service->service_id   = $service->id;
                         $donation_service->donation_id  = $donation->id;
                         $donation_service->quantity     = $request->quantity;
                         $donation_service->amount       = intval($request->total_amount);
                         $donation_service->save();
-                        
+
                         $response = [
                             'order_id'                  => $donation->id,
                             'donor_phone'               => $phone,
@@ -102,7 +102,7 @@ class DonationController extends Controller
                             'is_paid'                   => $donation->status == 'paid' ? true : false,
                             'message'                   => $donation->status == 'paid' ? $succ_msg : $fail_msg
                         ];
-                        
+
                     DB::commit();
                 } catch (\Exception $e) {
                     DB::rollBack();
@@ -110,7 +110,7 @@ class DonationController extends Controller
                 }
 
                 $message = __('api.Successful operation');
-                
+
                 return response()->api($response, 200, false, $message);
             }
 
@@ -129,15 +129,15 @@ class DonationController extends Controller
                     $donation->payment_brand    = $request->payment_brand ?? 'None';
                     $donation->response         = $request->response;
                     $donation->save();
-    
+
                     $donation_service               = new DonationService();
                     $donation_service->service_id   = $service->id;
                     $donation_service->donation_id  = $donation->id;
                     $donation_service->quantity     = $request->quantity;
                     $donation_service->amount       = intval($request->total_amount);
                     $donation_service->save();
-                    
-                    
+
+
                     $response = [
                         'order_id'                  => $donation->id,
                         'donor_phone'               => $phone,
@@ -146,7 +146,7 @@ class DonationController extends Controller
                         'is_paid'                   => $donation->status == 'paid' ? true : false,
                         'message'                   => $donation->status == 'paid' ? $succ_msg : $fail_msg
                     ];
-                    
+
                 DB::commit();
             } catch (\Exception $e) {
                 DB::rollBack();
@@ -159,7 +159,7 @@ class DonationController extends Controller
         }
         return response()->api(null, 200, true, __('api.not found data'));
     }
-    
+
     public function orderSendToDonor(Request $request)
     {
         $setting = setting();
@@ -168,84 +168,89 @@ class DonationController extends Controller
             'phone'     => 'required',
             'name'      => 'required',
         ]);
-        
+
         if ($validator->fails()) {
             return response()->api(null, 200, true, $validator->errors()->first());
         }
-        
+
         $phone  = $request->phone;
-        
+
         if (Donor::where('phone', '=', $phone)->exists()) {
                 $donor = Donor::where('phone', '=', $phone)->first();
                 $donor->name = $request->name;
                 $donor->save();
-                
-                
+
+
                 $donation = Donation::find($request->order_id);
                 $donation->donor_id = $donor->id;
                 $donation->save();
-                
-                
+
+
                 $name = $donor->name;
-                $service = DonationService::with('service')->where('donation_id', $donation->id)->first()->service->title;
+                $service = DonationService::with('service')->where('donation_id', $donation->id)->first();
+                $serviseN = Service::withTrashed()->where('id', $service->service_id)->first();
                 $price = $donation->total_amount;
                 $invoice_number = $donation->donation_code;
                 $invoice_url = env('APP_URL') . "donation-invoice/$invoice_number/show";
-                
+
                 $message = "أ/ $name \n";
                 $message .= "شكرًا لك لتبرعك بمبلغ $price ريال سعودي \n";
-                $message .= "لغرض: $service \n";
+                $message .= "لغرض: $serviseN \n";
                 $message .= "رقم السند: $invoice_number \n";
                 $message .= "لمشاهدة السند: $invoice_url \n\n";
                 $message .= $setting->name ;//"برُّكُم - جمعية البر بمكة المكرمة";
-                
+
+                return $message;
                 $this->sendSms($phone, $message);
-                
+
                 $response = [
                     "donor" => $donor,
                     "donation" => $donation
                 ];
-                
+
                 return response()->api($response, 200, false, __('api.Successful operation'));
         }
-        
+
         try {
             DB::beginTransaction();
                 $donor              = new Donor();
                 $donor->phone       = $phone;
                 $donor->name        = $request->name;
                 $donor->save();
-    
+
                 $donation = Donation::find($request->order_id);
                 $donation->donor_id = $donor->id;
                 $donation->save();
-                
+
                 $name = $donor->name;
-                $service = DonationService::with('service')->where('donation_id', $donation->id)->first()->service->title;
+                $service = DonationService::with('service')->where('donation_id', $donation->id)->first();
+                $serviseN = Service::withTrashed()->where('id', $service->service_id)->first();
                 $price = $donation->total_amount;
                 $invoice_number = $donation->donation_code;
                 $invoice_url = env('APP_URL') . "donation-invoice/$invoice_number/show";
-                
+
                 $message = "أ/ $name \n";
                 $message .= "شكرًا لك لتبرعك بمبلغ $price ريال سعودي \n";
-                $message .= "لغرض: $service \n";
+                $message .= "لغرض: $serviseN \n";
                 $message .= "رقم السند: $invoice_number \n";
                 $message .= "لمشاهدة السند: $invoice_url \n\n";
                 $message .= $setting->name ;//"برُّكُم - جمعية البر بمكة المكرمة";
-                
+
+                return $message;
+
                 $this->sendSms($phone, $message);
-                
+
                 $response = [
                     "donor" => $donor,
                     "donation" => $donation
                 ];
-                
+
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;
         }
-    
+
         return response()->api($response, 200, false, __('api.Successful operation'));
     }
 
@@ -300,8 +305,8 @@ class DonationController extends Controller
         }
         return response()->api(null, 200, false, __('api.not found data'));
     }
-    
-    
+
+
 
     /**
      * Donation completed

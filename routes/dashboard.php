@@ -5,14 +5,14 @@ use Illuminate\Support\Facades\Route;
 use App\Providers\RouteServiceProvider;
 
 Auth::routes(['register' => false]);
-Route::prefix(RouteServiceProvider::DASHBOARD)->name('dashboard.')->middleware(['auth'])->namespace('Dashboard')->group(function () {
+Route::prefix(RouteServiceProvider::DASHBOARD)->name('dashboard.')->middleware(['auth' , 'switchLanguage'])->namespace('Dashboard')->group(function () {
     // WELCOME
     Route::get('/', 'DashboardController@index')->name('welcome');
     Route::get('/research-results', 'DashboardController@generalSearch')->name('general-search');
 
     // ADMIN
-    Route::get('admin/{id}', 'DashboardController@editAdmin')->name('admin.edit');
-    Route::post('admin/{id}', 'DashboardController@updateAdmin')->name('admin.update');
+    Route::get('profile', 'DashboardController@editAdmin')->name('admin.edit');
+    Route::post('profile', 'DashboardController@updateAdmin')->name('admin.update');
 
     // SLIDERS
     Route::resource('/sliders', 'SliderController');
@@ -40,7 +40,7 @@ Route::prefix(RouteServiceProvider::DASHBOARD)->name('dashboard.')->middleware([
     // DONORS
     Route::resource('/donors', 'DonorController')->except(['create', 'store', 'show']);
     Route::delete('/donors/destroy/all', 'DonorController@multiDelete')->name('donors.destroy_all');
-    
+
     // GIFTS
     Route::resource('/gifts', 'GiftController')->except(['create', 'store', 'show']);
     Route::delete('/gifts/destroy/all', 'GiftController@multiDelete')->name('gifts.destroy_all');
@@ -156,7 +156,7 @@ Route::prefix(RouteServiceProvider::DASHBOARD)->name('dashboard.')->middleware([
     // SURVEYS
     Route::resource('/surveys', 'SurveyController')->except(['show']);
     Route::delete('/surveys/destroy/all', 'SurveyController@multiDelete')->name('surveys.destroy_all');
-    
+
     // MARKETER
     Route::resource('/marketers', 'MarketerController');
     Route::delete('/marketers/destroy/all', 'MarketerController@multiDelete')->name('marketers.destroy_all');
@@ -183,13 +183,13 @@ Route::prefix(RouteServiceProvider::DASHBOARD)->name('dashboard.')->middleware([
     Route::resource('/verification-donations', 'VerificationDonationController')->except(['create', 'store', 'show']);
     Route::delete('/verification-donations/destroy/all', 'VerificationDonationController@multiDelete')->name('verification-donations.destroy_all');
     Route::get('/verification-donations/export', 'VerificationDonationController@export')->name('verification-donations.export');
-    
+
     // Beneficiaries requests
     Route::resource('/beneficiaries-requests', 'BeneficiariesRequestController')->except(['show']);
     Route::delete('/beneficiaries-requests/destroy/all', 'BeneficiariesRequestController@multiDelete')->name('beneficiaries-requests.destroy_all');
     Route::patch('/beneficiaries-requests/{id}/update-status', 'BeneficiariesRequestController@updateStatus')->name('beneficiaries-requests.update-status');
     Route::get('/beneficiaries-requests/{id}/app-notifications/send', 'BeneficiariesRequestController@storeAppNotificationBeneficiary')->name('beneficiaries.app-notifications.send');
-    
+
     // Reviews
     Route::resource('/reviews', 'ReviewController')->except(['show', 'create', 'store', 'edit', 'update']);
     Route::delete('/reviews/destroy/all', 'ReviewController@multiDelete')->name('reviews.destroy_all');
@@ -204,6 +204,10 @@ Route::prefix(RouteServiceProvider::DASHBOARD)->name('dashboard.')->middleware([
     Route::any('user/notifications/read/{id}', 'NotificationsController@markAsReadAndRedirect');
 
     Route::get('/import-data', 'ImportDataController@importAllEvents');
+
+    //Change Language
+    Route::get('switch-language/{lang}', 'DashboardController@switchLang')->name('switchLang');
+
 });
 
 // OPEN FILE ROUTE ----
@@ -212,5 +216,5 @@ Route::get('lift-centers/{file_name}', 'Dashboard\LiftCenterController@openFile'
 Route::get('/donation-invoice/{donation_code}/show', 'Dashboard\InvoiceController@showInvoice')->name('donation-invoice.show');
 // general-assembly-member invoice
 Route::get('/general-assembly-member-invoice/{invoice_no}/show/{uuid}', 'Dashboard\InvoiceController@showInvoiceGeneralAssemblyMember')->name('general-assembly-member-invoice.show');
-// bulk edit for phone numbers 
+// bulk edit for phone numbers
 Route::any('/donors/bulk-edit', 'Dashboard\DonorController@bulkEdit');

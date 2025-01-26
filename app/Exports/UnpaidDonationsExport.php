@@ -17,7 +17,7 @@ class UnpaidDonationsExport implements FromCollection, WithMapping, WithHeadings
     public function collection()
     {
         return Donation::orderBy('id', 'DESC')->unpaid()
-                        ->select('id', 'donation_code', 'total_amount', 'payment_ways', 'payment_brand', 'bank_name', 'donor_id', 'donation_type', 'status', 'created_at')
+                        ->select('id', 'response', 'donation_code', 'total_amount', 'payment_ways', 'payment_brand', 'bank_name', 'donor_id', 'donation_type', 'status', 'created_at')
                         ->get();
     }
 
@@ -38,6 +38,7 @@ class UnpaidDonationsExport implements FromCollection, WithMapping, WithHeadings
             __('translation.' . $donation->payment_ways),
             $donation->payment_ways == 'credit_card' ? $donation->payment_brand : '-',
             $donation->payment_ways == 'bank_transfer' ? $donation->bank_name : '-',
+            json_decode($donation->response)->rrn ?? $donation->response,
             $donation->created_at->format('Y-m-d'),
         ];
     }
@@ -56,6 +57,7 @@ class UnpaidDonationsExport implements FromCollection, WithMapping, WithHeadings
             __('translation.payment_ways'),
             __('translation.payment_brand'),
             __('translation.bank_name'),
+            __('dashboard.payment_gateway_response'),
             __('dashboard.created_at'),
         ];
     }

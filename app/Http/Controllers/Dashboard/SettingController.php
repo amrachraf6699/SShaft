@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Dashboard\SettingRequest;
+use Carbon\Carbon;
 
 class SettingController extends Controller
 {
@@ -23,7 +24,7 @@ class SettingController extends Controller
         $setting = Setting::orderBy('id', 'DESC')->first();
         if ($setting) {
             $data = $request->validated();
-            
+
             if ($logo_img  = $request->file('logo')) {
                 Storage::disk('public')->delete('/settings/' . $setting->logo);
                 $filename       = 'IMG_' . time() . '_' . rand(1, 999999) . '.' . $logo_img->getClientOriginalExtension();
@@ -33,7 +34,7 @@ class SettingController extends Controller
                 })->save($path, 100);
                 $data['logo'] = $filename;
             }
-            
+
             if ($fav_img  = $request->file('fav')) {
                 Storage::disk('public')->delete('/settings/' . $setting->fav);
                 $filename       = 'IMG_' . time() . '_' . rand(1, 999999) . '.' . $fav_img->getClientOriginalExtension();
@@ -43,7 +44,7 @@ class SettingController extends Controller
                 })->save($path, 100);
                 $data['fav'] = $filename;
             }
-            
+
             Setting::orderBy('id', 'desc')->update($data);
             session()->flash('success', __('dashboard.updated_successfully'));
             return redirect()->back();
@@ -82,7 +83,8 @@ class SettingController extends Controller
                 'footer_temp'   => 'required|string',
             ]);
 
-            Setting::update($data);
+            $setting->update($data);
+
             session()->flash('success', __('dashboard.updated_successfully'));
             return redirect()->back();
         }
@@ -131,7 +133,7 @@ class SettingController extends Controller
         }
         return redirect()->back();
     }
-    
+
     public function sectionIdOnTheHomePage(Request $request)
     {
         $setting = Setting::orderBy('id', 'DESC')->first();
@@ -146,7 +148,7 @@ class SettingController extends Controller
         }
         return redirect()->back();
     }
-    
+
     public function smsSetting(Request $request)
     {
         $setting = Setting::orderBy('id', 'DESC')->first();
@@ -162,7 +164,7 @@ class SettingController extends Controller
         }
         return redirect()->back();
     }
-    
+
     public function updateAdvancedSettings(Request $request)
     {
         $setting = Setting::orderBy('id', 'DESC')->first();
@@ -171,6 +173,7 @@ class SettingController extends Controller
             $data = $request->all();
             $data['is_refresh'] = $request->boolean('is_refresh', false) ? 1 : 0;
             $data['pinned_mode'] = $request->boolean('pinned_mode', false) ? 1 : 0;
+            $data['quick_donations'] = $request->boolean('quick_donations', false) ? 1 : 0;
             $data['nearpay']['enableReceiptUi'] = $request->boolean('nearpay.enableReceiptUi', false) ? 1 : 0;
     // dd($data);
             // Validate the rest of the request data
@@ -181,7 +184,7 @@ class SettingController extends Controller
                 'nearpay.authValue' => 'required|string',
                 'nearpay.env' => 'required|string',
             ]);
-    
+
             // Format and merge nearpay data
             $validated['nearpay'] = json_encode([
                 'enableReceiptUi' => $data['nearpay']['enableReceiptUi'],
@@ -190,18 +193,19 @@ class SettingController extends Controller
                 'authValue' => $validated['nearpay']['authValue'],
                 'env' => $validated['nearpay']['env'],
             ]);
-    
+
             // Include boolean values explicitly
             $validated['is_refresh'] = $data['is_refresh'];
             $validated['pinned_mode'] = $data['pinned_mode'];
-    
+            $validated['quick_donations'] = $data['quick_donations'];
+
             // Update the settings
             $setting->update($validated);
-    
+
             session()->flash('success', __('dashboard.updated_successfully'));
             return redirect()->back();
         }
-    
+
         return redirect()->back()->withErrors(__('dashboard.error_updating'));
     }
 

@@ -11,9 +11,9 @@ class DonationService extends Model
     protected $fillable =   [
         'donation_id', 'service_id', 'quantity', 'amount',
     ];
-    
+
     public function service()
     {
-        return $this->belongsTo(Service::class);
+        return $this->belongsTo(Service::class , 'service_id');
     }
 }

@@ -178,13 +178,20 @@ class HomeController extends Controller
         }
         return response()->api(null, 200, false, __('api.not found data'));
     }
-    
+
     /**
      * Setting Information
      */
     public function settings()
     {
+        $branch = request()->branch_id ? Branch::where('id', request()->branch_id)->first() : null;
         $settings = Setting::query()->get();
+        if($branch)
+        {
+            $branch->update(['last_online_at' => now()]);
+        }else{
+            $settings->first()->update(['last_online_at' => now()]);
+        }
         if ($settings->count() > 0) {
             return response()->api(SettingResource::collection($settings), 200);
         }

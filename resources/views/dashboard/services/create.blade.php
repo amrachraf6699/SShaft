@@ -202,7 +202,7 @@
                                                 @error('multiple_service_value_2')<span class="text-danger">{{ $message }}</span>@enderror
                                             </div>
                                         </div>
-                                        
+
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 {!! Form::label('multiple_service_value_3', trans('translation.multiple_service_value_3')) !!}
@@ -244,7 +244,7 @@
 
                                 <div class="row mg-t-20">
                                     <div class="col-lg-2 mg-t-20 mg-lg-t-0 tx-bold">
-                                        {!! Form::label('viewpercent', trans('إظهار النسبة المؤوية في الخدمة')) !!}
+                                        {!! Form::label('viewpercent', trans('dashboard.percent_in_service')) !!}
                                     </div>
                                     <div class="col-lg-2">
                                         <label class="rdiobox">
@@ -284,14 +284,14 @@
                                 <div class="row pt-4">
                                     <div class="col-12">
                                         {!! Form::label('img', trans('dashboard.cover-img')) !!}
-                                        <p class="text-danger">* صيغة المرفق  jpeg ,.jpg , png </p>
+                                        <p class="text-danger">* {{ trans('dashboard.accepted_formats') }} jpeg ,.jpg , png </p>
                                         <br>
                                         <input type="file" name="cover" class="dropify" accept=".jpg, .png, image/jpeg, image/png" data-height="70" />
                                         @error('cover')<span class="text-danger">{{ $message }}</span>@enderror
                                     </div>
                                     <div class="col-6">
                                         {!! Form::label('img', trans('dashboard.img')) !!}
-                                        <p class="text-danger">* صيغة المرفق  jpeg ,.jpg , png </p>
+                                        <p class="text-danger">* {{ trans('dashboard.accepted_formats') }} jpeg ,.jpg , png </p>
                                         <br>
                                         <input type="file" name="img" class="dropify" accept=".jpg, .png, image/jpeg, image/png" data-height="70" />
                                         @error('img')<span class="text-danger">{{ $message }}</span>@enderror

@@ -32,45 +32,45 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="form-group">
-                                            {!! Form::label('phone', trans('الجوال')) !!}
+                                            {!! Form::label('phone', __('dashboard.phone')) !!}
                                             {!! Form::number('phone', old('phone'), ['class' => 'form-control']) !!}
                                             @error('phone')<span class="text-danger">{{ $message }}</span>@enderror
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="form-group">
-                                            {!! Form::label('bank_transaction_id', trans('الرقم المرجعي')) !!}
+                                            {!! Form::label('bank_transaction_id', __('dashboard.reference_code')) !!}
                                             {!! Form::number('bank_transaction_id', old('bank_transaction_id'), ['class' => 'form-control']) !!}
                                             @error('bank_transaction_id')<span class="text-danger">{{ $message }}</span>@enderror
                                         </div>
                                     </div>
                                 </div>
-                                
-                                
+
+
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="form-group">
-                                            {!! Form::label('service_id', trans('الخدمة')) !!}
+                                            {!! Form::label('service_id', trans('dashboard.service')) !!}
                                             {!! Form::select('service_id', App\Service::where('status', 'active')->pluck('title', 'id') ,old('service_id'), ['class' => 'form-control']) !!}
                                             @error('service_id')<span class="text-danger">{{ $message }}</span>@enderror
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            {!! Form::label('total_amount', trans('السعر الاجمالي')) !!}
+                                            {!! Form::label('total_amount', trans('dashboard.total_price')) !!}
                                             {!! Form::number('total_amount', old('total_amount'), ['class' => 'form-control']) !!}
                                             @error('total_amount')<span class="text-danger">{{ $message }}</span>@enderror
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            {!! Form::label('quantity', trans('العدد')) !!}
+                                            {!! Form::label('quantity', trans('dashboard.quantity')) !!}
                                             {!! Form::number('quantity', old('quantity'), ['class' => 'form-control']) !!}
                                             @error('quantity')<span class="text-danger">{{ $message }}</span>@enderror
                                         </div>
@@ -80,7 +80,7 @@
 
                                 <div class="row mg-t-20">
                                     <div class="col-lg-3 mg-t-20 mg-lg-t-0">
-                                        {!! Form::label('payment_brand', trans('طريقة الدفع')) !!}
+                                        {!! Form::label('payment_brand', trans('dashboard.payment_method')) !!}
                                     </div>
                                     <div class="col-lg-3">
                                         <label class="rdiobox">
@@ -113,43 +113,43 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="form-group">
-                                            {!! Form::label('branch_id', trans('الفرع')) !!}
+                                            {!! Form::label('branch_id', trans('dashboard.branch')) !!}
                                             {!! Form::select('branch_id', App\Branch::where('status', 'active')->pluck('name', 'id') ,old('branch_id'), ['class' => 'form-control']) !!}
                                             @error('branch_id')<span class="text-danger">{{ $message }}</span>@enderror
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="form-group">
-                                            {!! Form::label('created_at', trans('التاريخ')) !!}
+                                            {!! Form::label('created_at', trans('dashboard.date')) !!}
                                             <input type="datetime-local" value="{{ old('created_at') }}" class="form-control" id="created_at" name="created_at">
                                             @error('created_at')<span class="text-danger">{{ $message }}</span>@enderror
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <div class="row mg-t-20">
                                     <div class="col-lg-3 mg-t-20 mg-lg-t-0">
-                                        {!! Form::label('send_sms', trans('إرسال الفاتورة')) !!}
+                                        {!! Form::label('send_sms', trans('dashboard.send_invoice')) !!}
                                     </div>
                                     <div class="col-lg-3">
                                         <label class="rdiobox">
                                             {!! Form::radio('send_sms', 'yes', true, [old('send_sms')]) !!}
-                                            <span>{{ __('أجل') }}</span>
+                                            <span>{{ __('dashboard.yes') }}</span>
                                         </label>
                                     </div>
                                     <div class="col-lg-3 mg-t-20 mg-lg-t-0">
                                         <label class="rdiobox">
                                             {!! Form::radio('send_sms', 'no', false, [old('send_sms')]) !!}
-                                            <span>{{ __('لا') }}</span>
+                                            <span>{{ __('dashboard.no') }}</span>
                                         </label>
                                     </div>
                                     @error('send_sms')<span class="text-danger">{{ $message }}</span>@enderror
                                 </div>
-                                
-                                
+
+
                                 <div class="form-group pt-4">
                                     {!! Form::submit(trans('dashboard.add'), ['class' => 'btn btn-primary']) !!}
                                 </div>

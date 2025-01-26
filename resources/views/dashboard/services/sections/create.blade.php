@@ -90,21 +90,21 @@
                                     </div>
                                     @error('status')<span class="text-danger">{{ $message }}</span>@enderror
                                 </div>
-                                
+
                                 <div class="row mt-3">
                                     <div class="col-12">
                                         {!! Form::label('img', trans('dashboard.cover-img')) !!}
-                                        <p class="text-danger">* صيغة المرفق  jpeg ,.jpg , png </p>
+                                        <p class="text-danger">* {{ trans('dashboard.accepted_formats') }} jpeg ,.jpg , png </p>
                                         <br>
                                         <input type="file" name="cover" class="dropify" accept=".jpg, .png, image/jpeg, image/png" data-height="70" />
                                         @error('img')<span class="text-danger">{{ $message }}</span>@enderror
                                     </div>
                                 </div>
-                                
+
                                 <div class="row mt-3">
                                     <div class="col-12">
                                         {!! Form::label('img', trans('dashboard.image-img')) !!}
-                                        <p class="text-danger">* صيغة المرفق  jpeg ,.jpg , png </p>
+                                        <p class="text-danger">* {{ trans('dashboard.accepted_formats') }} jpeg ,.jpg , png </p>
                                         <br>
                                         <input type="file" name="image" class="dropify" accept=".jpg, .png, image/jpeg, image/png" data-height="70" />
                                         @error('img')<span class="text-danger">{{ $message }}</span>@enderror

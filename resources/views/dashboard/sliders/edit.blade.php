@@ -34,6 +34,27 @@
                                 {!! Form::open(['route' => ['dashboard.sliders.update', $slider->id], 'method' => 'post', 'files' => true]) !!}
                                 @csrf
                                 @method('PATCH')
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            {!! Form::label('branch_id', 'الفروع (خيار متعدد)') !!}
+                                            <select name="branchSelect" class="form-control select2 branchSelect" multiple="multiple">
+                                                @foreach(App\Branch::pluck('id', 'name') as $key => $value)
+                                                    {{-- <option value="{{ $value }}">{{ $key }}</option> --}}
+                                                    <option value="{{ $value }}"
+                                                    @if(in_array($value, explode(',', $slider->branch_id ?? ''))) selected @endif>
+                                                    {{ $key }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            <input type="hidden" name="branch_id" id="branchHiddenInput" value="{{ old('branch_id', $slider->branch_id) }}">
+                                            @error('branch_id')<span class="text-danger">{{ $message }}</span>@enderror
+                                        </div>
+                                    </div>
+                                </div>
+
+
                                 <div class="row mg-t-20">
                                     <div class="col-md-6">
                                         <div class="form-group">
@@ -112,7 +133,7 @@
                                 <div class="row pt-4">
                                     <div class="col-12">
                                         {!! Form::label('img', trans('dashboard.img')) !!}
-                                        <p class="text-danger">* صيغة المرفق  jpeg ,.jpg , png </p>
+                                        <p class="text-danger">* {{ trans('dashboard.accepted_formats') }} jpeg ,.jpg , png </p>
                                         <br>
                                         <input type="file" name="img" class="dropify"  data-default-file="{{ $slider->image_path }}" accept=".jpg, .png, image/jpeg, image/png" data-height="70" />
                                         @error('img')<span class="text-danger">{{ $message }}</span>@enderror
@@ -144,6 +165,25 @@
     $(document).ready(function() {
         $('.select2').select2({
             placeholder: '@lang('translation.select')',
+        });
+    });
+</script>
+<script>
+    $(document).ready(function() {
+        $('.select2-select').select2({
+            placeholder: '@lang('translation.select')',
+        });
+
+        $('.branchSelect').select2({
+            placeholder: "اختر الفرع"
+        });
+
+        var selectedBranches = $('#branchHiddenInput').val().split(',');
+        $('.branchSelect').val(selectedBranches).trigger('change');
+
+        $('.branchSelect').on('change', function() {
+            var selectedValues = $(this).val();
+            $('#branchHiddenInput').val(selectedValues.join(','));
         });
     });
 </script>

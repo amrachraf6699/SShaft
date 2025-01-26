@@ -20,7 +20,7 @@
                     <div class="col-xl-12">
                         <div class="card card-primary">
                             <div class="card-body">
-                                {!! Form::open(['route' => ['dashboard.admin.update', $admin->id], 'method' => 'post']) !!}
+                                {!! Form::open(['route' => ['dashboard.admin.update'], 'method' => 'post']) !!}
                                 @csrf
                                 @method('POST')
                                 <div class="row">

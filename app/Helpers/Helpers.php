@@ -113,9 +113,9 @@ if (!function_exists('donations_title_services'))
 
         for ($i = 0; $i < count($services); $i++) {
             if (count($services) > 1) {
-                $ser_list[$i] = $services[$i]->service->title . '(' . $services[$i]->amount . ')';
+                $ser_list[$i] = $services[$i]->service->title ?? "--" . '(' . $services[$i]->amount . ')';
             } else {
-                $ser_list[$i] = $services[$i]->service->title;
+                $ser_list[$i] = $services[$i]->service->title ?? "--";
             }
         }
         $titles = implode(' - ', $ser_list);
