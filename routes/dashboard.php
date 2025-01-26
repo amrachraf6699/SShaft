@@ -138,6 +138,7 @@ Route::prefix(RouteServiceProvider::DASHBOARD)->name('dashboard.')->middleware([
     // BRANCHES
     Route::resource('/branches', 'BranchController')->except(['show']);
     Route::delete('/branches/destroy/all', 'BranchController@multiDelete')->name('branches.destroy_all');
+    Route::post('/branches/advanced-settings/{branch_id}', 'BranchController@updateAdvancedSettings')->name('branches.updateAdvancedSettings');
 
     // ACCOUNTS
     Route::resource('/accounts', 'AccountController')->except(['show']);

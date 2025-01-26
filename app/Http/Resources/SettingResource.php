@@ -42,11 +42,11 @@ class SettingResource extends JsonResource
             'aboutAppFoot'          => $this->aboutAppFoot,
             'sms_token'             => $this->sms_token,
             'sms_sender'            => $this->sms_sender,
-            'paymentGateWay'        => (request()->branch_id && $branch) ? $branch->paymentGateWay : $this->paymentGateWay,
-            'is_refresh'            => (request()->branch_id && $branch) ? $branch->is_refresh : $this->is_refresh,
-            'refresh_time'          => (request()->branch_id && $branch) ? $branch->refresh_time : $this->refresh_time,
-            'pinned_mode'           => (request()->branch_id && $branch) ? $branch->pinned_mode : $this->pinned_mode,
-            'quick_donations'       => (request()->branch_id && $branch) ? $branch->quick_donations : $this->quick_donations,
+            'paymentGateWay'        => (request()->branch_id && $branch && $branch->paymentGateWay) ? $branch->paymentGateWay : $this->paymentGateWay,
+            'is_refresh'            => (request()->branch_id && $branch && $branch->is_refresh) ? $branch->is_refresh : $this->is_refresh,
+            'refresh_time'          => (request()->branch_id && $branch && $branch->refresh_time) ? $branch->refresh_time : $this->refresh_time,
+            'pinned_mode'           => (request()->branch_id && $branch && $branch->pinned_mode) ? $branch->pinned_mode : $this->pinned_mode,
+            'quick_donations'       => (request()->branch_id && $branch && $branch->quick_donations) ? $branch->quick_donations : $this->quick_donations,
             'nearpay'               => $nearpay,
 
         ];

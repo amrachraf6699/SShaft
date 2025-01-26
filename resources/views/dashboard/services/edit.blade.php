@@ -39,6 +39,22 @@
                                 {!! Form::open(['route' => ['dashboard.services.update', $service->id], 'method' => 'post', 'files' => true]) !!}
                                 @csrf
                                 @method('PATCH')
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            {!! Form::label('branch_id', 'الفروع (خيار متعدد)') !!}
+                                            <select name="branchSelect" class="form-control select2 branchSelect" multiple="multiple">
+                                                @foreach(App\Branch::pluck('id', 'name') as $key => $value)
+                                                    <option value="{{ $value }}">{{ $key }}</option>
+                                                @endforeach
+                                            </select>
+                                            <input type="hidden" name="branch_id" id="branchHiddenInput" value="{{ old('branch_id', $service->branch_id) }}">
+                                            @error('branch_id')<span class="text-danger">{{ $message }}</span>@enderror
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="form-group">
@@ -336,6 +352,18 @@
             } else {
                 $("#multiDiv").hide();
             }
+        });
+
+        $('.branchSelect').select2({
+            placeholder: "اختر الفرع"
+        });
+
+        var selectedBranches = $('#branchHiddenInput').val().split(',');
+        $('.branchSelect').val(selectedBranches).trigger('change');
+
+        $('.branchSelect').on('change', function() {
+            var selectedValues = $(this).val();
+            $('#branchHiddenInput').val(selectedValues.join(','));
         });
     });
 </script>

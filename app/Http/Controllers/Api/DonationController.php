@@ -34,7 +34,7 @@ class DonationController extends Controller
     public function orderNow(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'total_amount'  => 'required',
+            'total_amount'  => 'required|gt:0',
             'quantity'      => 'required|numeric|gt:0',
             'service_id'    => 'required|exists:services,id|integer',
             'phone'         => ['required', 'regex:/^((05))[0-9]{8}$/'],
@@ -160,6 +160,7 @@ class DonationController extends Controller
         return response()->api(null, 200, true, __('api.not found data'));
     }
 
+
     public function orderSendToDonor(Request $request)
     {
         $setting = setting();
@@ -185,22 +186,19 @@ class DonationController extends Controller
                 $donation->donor_id = $donor->id;
                 $donation->save();
 
-
                 $name = $donor->name;
-                $service = DonationService::with('service')->where('donation_id', $donation->id)->first();
-                $serviseN = Service::withTrashed()->where('id', $service->service_id)->first();
+                $service = DonationService::with('service')->where('donation_id', $donation->id)->latest()->first()->service->title;
                 $price = $donation->total_amount;
                 $invoice_number = $donation->donation_code;
                 $invoice_url = env('APP_URL') . "donation-invoice/$invoice_number/show";
 
                 $message = "أ/ $name \n";
                 $message .= "شكرًا لك لتبرعك بمبلغ $price ريال سعودي \n";
-                $message .= "لغرض: $serviseN \n";
+                $message .= "لغرض: $service \n";
                 $message .= "رقم السند: $invoice_number \n";
                 $message .= "لمشاهدة السند: $invoice_url \n\n";
                 $message .= $setting->name ;//"برُّكُم - جمعية البر بمكة المكرمة";
 
-                return $message;
                 $this->sendSms($phone, $message);
 
                 $response = [
@@ -223,20 +221,17 @@ class DonationController extends Controller
                 $donation->save();
 
                 $name = $donor->name;
-                $service = DonationService::with('service')->where('donation_id', $donation->id)->first();
-                $serviseN = Service::withTrashed()->where('id', $service->service_id)->first();
+                $service = DonationService::with('service')->where('donation_id', $donation->id)->latest()->first()->service->title;
                 $price = $donation->total_amount;
                 $invoice_number = $donation->donation_code;
                 $invoice_url = env('APP_URL') . "donation-invoice/$invoice_number/show";
 
                 $message = "أ/ $name \n";
                 $message .= "شكرًا لك لتبرعك بمبلغ $price ريال سعودي \n";
-                $message .= "لغرض: $serviseN \n";
+                $message .= "لغرض: $service \n";
                 $message .= "رقم السند: $invoice_number \n";
                 $message .= "لمشاهدة السند: $invoice_url \n\n";
                 $message .= $setting->name ;//"برُّكُم - جمعية البر بمكة المكرمة";
-
-                return $message;
 
                 $this->sendSms($phone, $message);
 

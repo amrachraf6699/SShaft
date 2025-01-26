@@ -40,6 +40,21 @@
                                 @csrf
                                 <div class="row">
                                     <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    {!! Form::label('branch_id', 'الفروع (خيار متعدد)') !!}
+                                                    <select name="branchSelect" class="form-control select2 branchSelect" multiple="multiple">
+                                                        @foreach(App\Branch::pluck('id', 'name') as $key => $value)
+                                                            <option value="{{ $value }}">{{ $key }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    <input type="hidden" name="branch_id" id="branchHiddenInput" value="{{ old('branch_id') }}">
+                                                    @error('branch_id')<span class="text-danger">{{ $message }}</span>@enderror
+                                                </div>
+                                            </div>
+                                        </div>
+
                                         {{-- <div class="form-group">
                                             {!! Form::label('service_section_id', trans('translation.section')) !!}
                                             {!! Form::select('service_section_id', ['' => trans('dashboard.category_select')] + $sections->toArray(), old('service_section_id'), ['class' => 'form-control select2']) !!}
@@ -48,12 +63,12 @@
 
                                         <div class="form-group">
                                             <select name="service_section_id" class="form-control select2">
-                                                <option value="">@lang('translation.category_select')</option>
+                                                <option value="">@lang('dashboard.category_select')</option>
                                                 @php
                                                     $sections_collection = \App\ServiceSection::orderBy('id', 'DESC')->get();
                                                 @endphp
                                                 @foreach ($sections_collection as $section)
-                                                    <option value="{{ $section->id }}">
+                                                    <option value="{{ $section->id }}" @if (old('service_section_id') == $section->id) selected @endif>
                                                         @if ($section->parent_id)
                                                             {{ $section->title }} (@lang('translation.parent'): {{$section->parent()->title}})
                                                         @else
@@ -350,9 +365,22 @@
             }
         });
 
-        $('.select2').select2({
+        $('.select2-select').select2({
             placeholder: '@lang('translation.select')',
         });
+
+        $('.branchSelect').select2({
+            placeholder: "اختر الفرع"
+        });
+
+        var selectedBranches = $('#branchHiddenInput').val().split(',');
+        $('.branchSelect').val(selectedBranches).trigger('change');
+
+        $('.branchSelect').on('change', function() {
+            var selectedValues = $(this).val();
+            $('#branchHiddenInput').val(selectedValues.join(','));
+        });
+
     });
 </script>
 @endsection

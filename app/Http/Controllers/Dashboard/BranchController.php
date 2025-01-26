@@ -91,4 +91,47 @@ class BranchController extends Controller
         }
         return redirect()->route('dashboard.branches.index');
     }
+
+    public function updateAdvancedSettings($branch_id , Request $request)
+    {
+        $setting = Branch::find($branch_id);
+        if ($setting) {
+            // Ensure boolean values are handled explicitly
+            $data = $request->all();
+            $data['is_refresh'] = $request->boolean('is_refresh', false) ? 1 : 0;
+            $data['pinned_mode'] = $request->boolean('pinned_mode', false) ? 1 : 0;
+            $data['quick_donations'] = $request->boolean('quick_donations', false) ? 1 : 0;
+            $data['nearpay']['enableReceiptUi'] = $request->boolean('nearpay.enableReceiptUi', false) ? 1 : 0;
+            // Validate the rest of the request data
+            $validated = $request->validate([
+                'refresh_time' => 'required|integer|min:0',
+                'nearpay.finishTimeout' => 'required|integer|min:0',
+                'nearpay.authType' => 'required|string',
+                'nearpay.authValue' => 'required|string',
+                'nearpay.env' => 'required|string',
+            ]);
+
+            // Format and merge nearpay data
+            $validated['nearpay'] = json_encode([
+                'enableReceiptUi' => $data['nearpay']['enableReceiptUi'],
+                'finishTimeout' => $validated['nearpay']['finishTimeout'],
+                'authType' => $validated['nearpay']['authType'],
+                'authValue' => $validated['nearpay']['authValue'],
+                'env' => $validated['nearpay']['env'],
+            ]);
+
+            // Include boolean values explicitly
+            $validated['is_refresh'] = $data['is_refresh'];
+            $validated['pinned_mode'] = $data['pinned_mode'];
+            $validated['quick_donations'] = $data['quick_donations'];
+
+            // Update the settings
+            $setting->update($validated);
+
+            session()->flash('success', __('dashboard.updated_successfully'));
+            return redirect()->route('dashboard.branches.index');
+        }
+
+        return redirect()->back()->withErrors(__('dashboard.error_updating'));
+    }
 }

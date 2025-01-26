@@ -47,10 +47,8 @@ class ServiceController extends Controller
     public function store(ServiceRequest $request)
     {
         $data = $request->validated();
-        
-        // dd($data);
-        // return $data;
-        
+
+
         // cover image
         $cover_img    = $request->file('cover');
         $cover_filename       = 'IMG_' . time() . '_' . rand(1, 999999) . '.' . $cover_img->getClientOriginalExtension();
@@ -58,8 +56,8 @@ class ServiceController extends Controller
         Image::make($cover_img->getRealPath())->resize(1000, null, function ($constraint) {
             $constraint->aspectRatio();
         })->save($path, 100);
-        
-        
+
+
         // image
         $img    = $request->file('img');
         $filename       = 'IMG_' . time() . '_' . rand(1, 999999) . '.' . $img->getClientOriginalExtension();
@@ -133,7 +131,7 @@ class ServiceController extends Controller
                 })->save($path, 100);
                 $data['cover'] = $filename;
             }
-            
+
             // service image
             if ($img  = $request->file('img')) {
                 Storage::disk('public')->delete('/services/' . $service->img);
