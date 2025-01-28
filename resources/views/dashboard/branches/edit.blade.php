@@ -166,8 +166,7 @@
                                             <div class="form-group">
                                                 {!! Form::label('nearpay', trans('dashboard.nearpay_settings')) !!}
 
-                                                    {{-- @php
-                                                        // Decode nearpay column or set default values if null
+                                                    @php
                                                         $nearpay = $branch->nearpay ? json_decode($branch->nearpay, true) : [
                                                             'enableReceiptUi' => false,
                                                             'finishTimeout' => 0,
@@ -175,7 +174,7 @@
                                                             'authValue' => '',
                                                             'env' => 'sandbox',
                                                         ];
-                                                    @endphp --}}
+                                                    @endphp
 
                                                 <div class="col-md-12">
                                                     <div class="form-group">

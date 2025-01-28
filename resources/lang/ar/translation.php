@@ -7,7 +7,7 @@ return [
     'active'                            => 'تفعيل',
     'inactive'                          => 'إيقاف',
     'membership_type'                   => 'نوع العضوية',
-
+    'pending_payment'                   => 'معلقة',
     'packages'                          => 'أنواع عضويات الجمعية العمومية',
     'annually'                          => 'ريال سعودي سنوياً',
     'package_id'                        => 'نوع العضوية',
@@ -238,4 +238,5 @@ return [
 
     'reports'                           => 'التقارير',
     'general-reports'                   => 'التقارير العامة',
+    'pending_donations'                 => 'التبرعات المعلقة',
 ];

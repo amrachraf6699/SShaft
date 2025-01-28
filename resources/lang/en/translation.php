@@ -232,4 +232,6 @@ return [
     'create_donation'                   => 'Create Donation',
     'parent_id'                        => 'Sub Category',
     'parent_section_select'             => '-- Main Category --',
+    'pending_donations'                 => 'Pending Donations',
+    'pending_payment'                   => 'Pending',
 ];

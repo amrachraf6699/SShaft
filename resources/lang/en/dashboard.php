@@ -204,6 +204,7 @@ return [
     'category'                  => 'Category',
     'category_select'           => 'Select Category',
     'associated_products'       => 'Associated Products',
+    'payment_response'          => 'Payment Gateway Response',
 
     'products'                  => 'Products',
     'title'                     => 'Title',
@@ -279,7 +280,10 @@ return [
     'env' => 'Environment',
     'quick_donations' => 'Quick Donations',
     'last_online_at' => 'Last Online At',
+    'show_last_online_at' => 'Show Last Online At',
     'last_online_at_status' => 'Refresh Status',
     'branch_ids' => 'Branches',
+    'branch_in_slider' => 'Branch in Slider',
+    'branch_in_service' => 'Branch in Service',
 ];
 

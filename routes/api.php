@@ -4,14 +4,14 @@ use Illuminate\Support\Facades\Route;
 
 // AUTH
 Route::namespace('Api')->group(function () {
-    
+
     Route::get("get-otp/{phone?}", function($phone = null) {
         if ($phone) {
-            return \App\Donor::where('phone', 'like', "%$phone%")->pluck("otp_code", "phone"); 
+            return \App\Donor::where('phone', 'like', "%$phone%")->pluck("otp_code", "phone");
         }
-        return \App\Donor::pluck("otp_code", "phone"); 
+        return \App\Donor::pluck("otp_code", "phone");
     });
-    
+
     /**
      *
      * ** Auth Route **
@@ -66,7 +66,7 @@ Route::namespace('Api')->group(function () {
     Route::get('/services-sections', 'ServiceController@servicesSections');
     Route::get('/services-sections/{section}/services', 'ServiceController@servicesOfSection');
     Route::get('/services-sections/{section}/service/{service}/details', 'ServiceController@serviceDetails');
-    
+
     Route::get('/services-sections/{section}/beneficiaries', 'ServiceController@beneficiariesOfSection');
 
     /**
@@ -79,7 +79,7 @@ Route::namespace('Api')->group(function () {
     Route::get('/home/events', 'HomeController@events');
     Route::get('/home/get-to-know-us/brief', 'HomeController@brief');
     Route::get('/home/branches', 'HomeController@branches');
-    Route::get('/home/sliders/{type?}', 'HomeController@sliders');
+    Route::get('/{type?}/sliders', 'HomeController@sliders');
     Route::get('/settings', 'HomeController@settings');
     Route::post('/home/contact-us', 'HomeController@contactUs');
     Route::get('/home/contact-information', 'HomeController@contactInformation');
@@ -115,16 +115,17 @@ Route::namespace('Api')->group(function () {
      * ** Donations orders **
      */
     Route::post('/order-now', 'DonationController@orderNow');
+    Route::put('/order-now', 'DonationController@updateOrder');
     Route::get('/donations/{order_id}/donation-completed', 'DonationController@donationCompleted');
-    
+
     Route::post('/order-send-it-to-donor', 'DonationController@orderSendToDonor');
 
     /** Get Payment Status */
     Route::get('/get-payment-status/{checkout_id}/{payment_brand}/order={order_id}', 'DonationController@getPaymentStatus');
-    
+
     Route::get('/branches', function () {
-        $branches = \App\Branch::all(); 
-        
+        $branches = \App\Branch::all();
+
         $res = [
             'data' => $branches
         ];

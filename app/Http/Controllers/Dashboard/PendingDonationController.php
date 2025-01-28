@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers\Dashboard;
 
-use App\Service;
 use App\Donation;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Service;
+use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\VerificationDonationsExport;
-use App\Http\Requests\Dashboard\DonationRequest;
+use App\Exports\UnpaidDonationsExport;
 
-class VerificationDonationController extends Controller
+class PendingDonationController extends Controller
 {
     public function __construct()
     {
@@ -19,6 +18,7 @@ class VerificationDonationController extends Controller
         $this->middleware(['permission:update_donations'])->only('edit');
         $this->middleware(['permission:delete_donations'])->only(['destroy', 'multiDelete']);
     }
+
 
     public function index()
     {
@@ -29,7 +29,7 @@ class VerificationDonationController extends Controller
         $order_by       = (isset(\request()->order_by) && \request()->order_by != '') ? \request()->order_by : 'DESC';
         $limit_by       = (isset(\request()->limit_by) && \request()->limit_by != '') ? \request()->limit_by : '10';
 
-        $donations = Donation::query()->verification()->withCount('services')->with(['donor:id,membership_no', 'services']);
+        $donations = Donation::query()->pending()->withCount('services')->with(['donor:id,membership_no', 'services']);
 
         if ($keyword != null) {
             $donations = $donations->search($keyword);
@@ -49,65 +49,50 @@ class VerificationDonationController extends Controller
         $donations = $donations->paginate($limit_by);
 
         $services = Service::orderBy('id', 'DESC')->pluck('title', 'id');
-        return view('dashboard.verification-donations.index', compact('donations', 'services'));
+        return view('dashboard.pending-donations.index', compact('donations', 'services'));
     }
 
     public function edit($id)
     {
         $donation = Donation::whereId($id)->first();
         if($donation) {
-            return view('dashboard.verification-donations.edit', compact('donation'));
+            return view('dashboard.pending-donations.edit', compact('donation'));
         }
-        return redirect()->route('dashboard.verification-donations.index');
+        return redirect()->route('dashboard.pending-donations.index');
     }
+
 
     public function update(Request $request, $id)
     {
         $donation = Donation::whereId($id)->first();
         if($donation) {
             $data = $request->validate([
-                'status'    =>  'required|in:paid,unpaid',
+                'status'    =>  'required|in:paid,unpaid,pending',
             ]);
 
-            // update "collected_value" in service
-            $services = $donation->services()->get();
-
-            if ($request->status === 'paid') {
-                foreach ($services as $service) {
-                    $service->update([
-                        'collected_value'  => $service->collected_value + $service->pivot->amount,
-                    ]);
-                }
-            } else {
-                foreach ($services as $service) {
-                    if ($service->collected_value < 0)
-                        $service->update([
-                            'collected_value'  => $service->collected_value - $service->pivot->amount,
-                        ]);
-                    else
-                        $service->update([
-                            'collected_value'  => null,
-                        ]);
-                }
-            }
-
-
             $donation->update($data);
+
             session()->flash('success', __('dashboard.updated_successfully'));
-            return redirect()->route('dashboard.verification-donations.index');
+            return redirect()->route('dashboard.pending-donations.index');
         }
-        return redirect()->route('dashboard.verification-donations.index');
+        return redirect()->route('dashboard.pending-donations.index');
     }
 
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
     public function destroy($id)
     {
         $donation = Donation::whereId($id)->first();
         if($donation) {
             $donation->delete();
             session()->flash('success', __('dashboard.deleted_successfully'));
-            return redirect()->route('dashboard.verification-donations.index');
+            return redirect()->route('dashboard.pending-donations.index');
         }
-        return redirect()->route('dashboard.verification-donations.index');
+        return redirect()->route('dashboard.pending-donations.index');
     }
 
     public function multiDelete(Request $request)
@@ -119,11 +104,11 @@ class VerificationDonationController extends Controller
             session()->flash('success', __('dashboard.deleted_successfully'));
             return redirect()->back();
         }
-        return redirect()->route('dashboard.verification-donations.index');
+        return redirect()->route('dashboard.pending-donations.index');
     }
 
     public function export()
     {
-        return Excel::download(new VerificationDonationsExport, __('translation.verification_donations') . ' ' . date('Y-m-d h-m-i') . '.xlsx');
+        return Excel::download(new UnpaidDonationsExport, __('translation.pending_donations') . ' ' . date('Y-m-d h-m-i') . '.xlsx');
     }
 }

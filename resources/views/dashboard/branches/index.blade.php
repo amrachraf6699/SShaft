@@ -40,7 +40,7 @@
                                                 <th class="py-2">{{ __('dashboard.name') }}</th>
                                                 <th class="py-2">{{ __('dashboard.status') }}</th>
                                                 <th class="py-2">{{ __('dashboard.created_at') }}</th>
-                                                @if (request()->query('advanced'))
+                                                @if (App\Setting::first()->show_last_online_at)
                                                 <th class="py-2">{{ __('dashboard.last_online_at') }}</th>
                                                 @endif
                                                 <th class="py-2">{{ __('dashboard.action') }}</th>
@@ -59,7 +59,7 @@
                                                         @endif
                                                     </td>
                                                     <td>{{ $branch->created_at->format('M d, Y') }}</td>
-                                                    @if (request()->query('advanced'))
+                                                    @if (App\Setting::first()->show_last_online_at)
                                                     <td>
                                                         @if($branch->last_online_at)
                                                             {{ Carbon\Carbon::parse($branch->last_online_at)->format('M d, Y (H:i:s)') }} -

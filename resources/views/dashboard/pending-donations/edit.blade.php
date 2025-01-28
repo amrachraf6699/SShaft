@@ -8,7 +8,7 @@
 				<div class="breadcrumb-header justify-content-between">
 					<div class="my-auto">
 						<div class="d-flex">
-							<h4 class="content-title mb-0 my-auto">{{ __('translation.paid_donations') }}</h4><span class="text-muted mt-1 tx-13 mr-2 mb-0">/ {{ __('dashboard.update') }}</span>
+							<h4 class="content-title mb-0 my-auto">{{ __('translation.pending_donations') }}</h4><span class="text-muted mt-1 tx-13 mr-2 mb-0">/ {{ __('dashboard.update') }}</span>
 						</div>
 					</div>
 				</div>
@@ -51,19 +51,25 @@
                         <div class="card card-primary">
                             <div class="card-header py-3 d-flex">
                                 <div class="d-flex justify-content-between">
-                                    <a href="{{  route('dashboard.unpaid-donations.index') }}" class="btn btn-primary btn-with-icon btn-block">
-                                        {{ __('translation.unpaid_donations') }}
+                                    <a href="{{  route('dashboard.pending-donations.index') }}" class="btn btn-primary btn-with-icon btn-block">
+                                        {{ __('translation.pending_donations') }}
                                     </a>
                                 </div>
                             </div>
                             <div class="card-body">
-                                {!! Form::open(['route' => ['dashboard.paid-donations.update', $donation->id], 'method' => 'post']) !!}
+                                {!! Form::open(['route' => ['dashboard.pending-donations.update', $donation->id], 'method' => 'post']) !!}
                                 @csrf
                                 @method('PATCH')
 
                                 <div class="row mg-t-20">
                                     <div class="col-lg-3 mg-t-20 mg-lg-t-0">
                                         {!! Form::label('status', trans('dashboard.status')) !!}
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <label class="rdiobox">
+                                            {!! Form::radio('status', 'pending', (old('status', $donation->status)) == 'pending' ? 'checked' : '') !!}
+                                            <span>{{ __('translation.pending_payment') }}</span>
+                                        </label>
                                     </div>
                                     <div class="col-lg-3">
                                         <label class="rdiobox">

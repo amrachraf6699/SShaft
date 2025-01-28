@@ -94,7 +94,7 @@
                                     @error('status')<span class="text-danger">{{ $message }}</span>@enderror
                                 </div>
 
-                                <div class="row mg-t-20">
+                                {{-- <div class="row mg-t-20">
                                     <div class="col-lg-3 mg-t-20 mg-lg-t-0">
                                         {!! Form::label('quick_donation', trans('translation.quick_donation')) !!}
                                     </div>
@@ -111,7 +111,7 @@
                                         </label>
                                     </div>
                                     @error('quick_donation')<span class="text-danger">{{ $message }}</span>@enderror
-                                </div>
+                                </div> --}}
 
                                 <div class="row mg-t-20">
                                     <div class="col-md-6">
@@ -135,7 +135,7 @@
                                         {!! Form::label('img', trans('dashboard.img')) !!}
                                         <p class="text-danger">* {{ trans('dashboard.accepted_formats') }} jpeg ,.jpg , png </p>
                                         <br>
-                                        <input type="file" name="img" class="dropify"  data-default-file="{{ $slider->image_path }}" accept=".jpg, .png, image/jpeg, image/png" data-height="70" />
+                                        <input type="file" name="img" class="dropify"  data-default-file="{{ $slider->image_path }}" accept=".jpg, .png, image/jpeg, image/png, .mp4" data-height="70" />
                                         @error('img')<span class="text-danger">{{ $message }}</span>@enderror
                                     </div>
                                 </div>
@@ -162,29 +162,26 @@
 <script src="{{ URL::asset('dashboard_files/assets/plugins/fileuploads/js/fileupload.js') }}"></script>
 <script src="{{ URL::asset('dashboard_files/assets/plugins/fileuploads/js/file-upload.js') }}"></script>
 <script>
-    $(document).ready(function() {
-        $('.select2').select2({
-            placeholder: '@lang('translation.select')',
-        });
+$('.branchSelect').select2({
+    placeholder: "اختر الفرع"
+});
+
+var selectedBranches = $('#branchHiddenInput').val().split(',').filter(Boolean);
+$('.branchSelect').val(selectedBranches).trigger('change');
+
+$('.branchSelect').on('change', function() {
+    var $select = $(this);
+    var selectedValues = $select.val() || [];
+
+    $('#branchHiddenInput').val(selectedValues.join(','));
+
+    selectedValues.forEach(function(value) {
+        $select.find(`option[value="${value}"]`).prop('disabled', true);
     });
-</script>
-<script>
-    $(document).ready(function() {
-        $('.select2-select').select2({
-            placeholder: '@lang('translation.select')',
-        });
 
-        $('.branchSelect').select2({
-            placeholder: "اختر الفرع"
-        });
-
-        var selectedBranches = $('#branchHiddenInput').val().split(',');
-        $('.branchSelect').val(selectedBranches).trigger('change');
-
-        $('.branchSelect').on('change', function() {
-            var selectedValues = $(this).val();
-            $('#branchHiddenInput').val(selectedValues.join(','));
-        });
+    $select.select2({
+        placeholder: "اختر الفرع"
     });
+});
 </script>
 @endsection

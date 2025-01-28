@@ -70,6 +70,11 @@ class Service extends Model
         return $query->where('price_value', 'multi');
     }
 
+    public function scopeQuickDonation($query)
+    {
+        return $query->where('quick_donation', 'included');
+    }
+
     public function service_section()
     {
         return $this->belongsTo(ServiceSection::class);

@@ -157,3 +157,13 @@ Route::name('frontend.')->middleware(['donor.activated', 'maintenance'])->namesp
 });
 
 Route::get('/maintenance', 'Frontend\HomeController@maintenance')->name('frontend.maintenance');
+
+
+Route::get('storage-link', function () {
+    try {
+        Artisan::call('storage:link');
+        return 'Storage link created';
+    } catch (\Exception $e) {
+        return $e->getMessage();
+    }
+});

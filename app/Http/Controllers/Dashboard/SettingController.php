@@ -172,10 +172,13 @@ class SettingController extends Controller
             // Ensure boolean values are handled explicitly
             $data = $request->all();
             $data['is_refresh'] = $request->boolean('is_refresh', false) ? 1 : 0;
+            $data['show_last_online_at'] = $request->boolean('show_last_online_at', false) ? 1 : 0;
             $data['pinned_mode'] = $request->boolean('pinned_mode', false) ? 1 : 0;
             $data['quick_donations'] = $request->boolean('quick_donations', false) ? 1 : 0;
+            $data['branch_in_slider'] = $request->boolean('branch_in_slider', false) ? 1 : 0;
+            $data['branch_in_service'] = $request->boolean('branch_in_service', false) ? 1 : 0;
             $data['nearpay']['enableReceiptUi'] = $request->boolean('nearpay.enableReceiptUi', false) ? 1 : 0;
-    // dd($data);
+            // dd($data);
             // Validate the rest of the request data
             $validated = $request->validate([
                 'refresh_time' => 'required|integer|min:0',
@@ -198,7 +201,19 @@ class SettingController extends Controller
             $validated['is_refresh'] = $data['is_refresh'];
             $validated['pinned_mode'] = $data['pinned_mode'];
             $validated['quick_donations'] = $data['quick_donations'];
+            $validated['show_last_online_at'] = $data['show_last_online_at'];
+            $validated['branch_in_slider'] = $data['branch_in_slider'];
+            $validated['branch_in_service'] = $data['branch_in_service'];
 
+            // Check if branch_in_slider is false, then null branch_id from all sliders
+            if (!$data['branch_in_slider']) {
+                \DB::table('sliders')->update(['branch_id' => null]);
+            }
+
+            // Check if branch_in_service is false, then null branch_id from all sliders
+            if (!$data['branch_in_service']) {
+                \DB::table('services')->update(['branch_id' => null]);
+            }
             // Update the settings
             $setting->update($validated);
 

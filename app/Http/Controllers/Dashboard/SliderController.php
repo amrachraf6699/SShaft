@@ -40,13 +40,22 @@ class SliderController extends Controller
     {
         $data   = $request->validated();
 
-        // img Slider
         $img            = $request->file('img');
         $filename       = 'IMG_S_' . time() . '_' . rand(1, 9999) . '.' . $img->getClientOriginalExtension();
         $path           = storage_path('app/public/uploads/sliders/' . $filename);
-        Image::make($img->getRealPath())->resize(800, null, function ($constraint) {
-            $constraint->aspectRatio();
-        })->save($path, 100);
+
+
+        $filename_prefix = $img->getClientOriginalExtension() === 'mp4' ? 'VID_S_' : 'IMG_S_';
+        $filename = $filename_prefix . time() . '_' . rand(1, 9999) . '.' . $img->getClientOriginalExtension();
+        $path           = storage_path('app/public/uploads/sliders/' . $filename);
+
+        if ($img->getClientOriginalExtension() === 'mp4') {
+            $img->move(storage_path('app/public/uploads/sliders/'), $filename);
+        } else {
+            Image::make($img->getRealPath())->resize(800, null, function ($constraint) {
+                $constraint->aspectRatio();
+            })->save($path, 100);
+        }
 
         $data['img']   = $filename;
 
@@ -79,17 +88,23 @@ class SliderController extends Controller
         $slider = Slider::whereId($id)->first();
         if($slider) {
             $data   = $request->validated();
-            // img
+
             if ($img = $request->file('img')) {
                 Storage::disk('public')->delete('/sliders/' . $slider->img);
 
-                $filename       = 'IMG_S_' . time() . '_' . rand(1, 9999) . '.' . $img->getClientOriginalExtension();
+                $filename_prefix = $img->getClientOriginalExtension() === 'mp4' ? 'VID_S_' : 'IMG_S_';
+                $filename = $filename_prefix . time() . '_' . rand(1, 9999) . '.' . $img->getClientOriginalExtension();
                 $path           = storage_path('app/public/uploads/sliders/' . $filename);
-                Image::make($img->getRealPath())->resize(800, null, function ($constraint) {
-                    $constraint->aspectRatio();
-                })->save($path, 100);
 
+                if ($img->getClientOriginalExtension() === 'mp4') {
+                    $img->move(storage_path('app/public/uploads/sliders/'), $filename);
+                } else {
+                    Image::make($img->getRealPath())->resize(800, null, function ($constraint) {
+                        $constraint->aspectRatio();
+                    })->save($path, 100);
+                }
                 $data['img']   = $filename;
+
             }
 
             $slider->update($data);

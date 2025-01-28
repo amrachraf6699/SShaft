@@ -128,12 +128,32 @@ class HomeController extends Controller
      */
     public function sliders($type = "home")
     {
-        $sliders = Slider::query()->active()->where('type', $type)->inRandomOrder()->limit(4)->get();
-        if ($sliders->count() > 0) {
+        $setting = Setting::first();
+        if (!in_array($type, ['home', 'section'])) {
+            abort(404);
+        }
+
+        $branchId = request()->branch_id;
+
+        $query = Slider::query()
+            ->active()
+            ->where('type', $type);
+
+            if($setting->branch_in_slider)
+            {
+                $query = $query->whereRaw("FIND_IN_SET(?, REPLACE(branch_id, ' ', ''))", [(int)$branchId]);
+            }
+            $sliders = $query->inRandomOrder()
+            ->limit(4)
+            ->get();
+
+        if ($sliders->isNotEmpty()) {
             return response()->api(SliderResource::collection($sliders), 200);
         }
+
         return response()->api(null, 200, false, __('api.not found data'));
     }
+
 
     /**
      * Contact us

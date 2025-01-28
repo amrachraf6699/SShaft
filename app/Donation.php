@@ -55,7 +55,7 @@ class Donation extends Model
     {
         return $this->belongsTo(Gift::class);
     }
-    
+
     public function beneficiary()
     {
         return $this->belongsTo(Beneficiary::class);
@@ -76,6 +76,11 @@ class Donation extends Model
     public function scopeUnpaid($query)
     {
         return $query->where('status', 'unpaid');
+    }
+
+    public function scopePending($query)
+    {
+        return $query->where('status', 'pending');
     }
 
     public function scopeDonations($query)

@@ -24,6 +24,7 @@ return [
     'welcome_auth'              => 'أهلاً :name، مرحباً بعودتك!',
 
     'branch'                    => 'الفرع',
+    'payment_response'          => 'رد بوابة الدفع',
     'ar'                        => 'اللغة العربية',
     'en'                        => 'اللغة الإنجليزية',
     'rrn'                       => 'رقم التحويل',
@@ -348,6 +349,9 @@ return [
     'percent_in_service' => 'إظهار النسبة المؤوية في الخدمة',
     'quick_donations' => 'التبرعات السريعة',
     'last_online_at' => 'آخر ظهور',
+    'show_last_online_at' => 'إظهار آخر ظهور',
     'last_online_at_status' => 'حالة التحديث',
     'branch_ids' => 'الفروع',
+    'branch_in_slider' => 'فروعنا في السلايدر',
+    'branch_in_service' => 'فروعنا في الخدمات',
 ];

@@ -24,9 +24,9 @@ class DonationController extends Controller
     use SmsTrait;
 
     public function isJson($string) {
-       json_decode($string);
-       return json_last_error() === JSON_ERROR_NONE;
-    }
+        json_decode($string);
+        return json_last_error() === JSON_ERROR_NONE;
+     }
 
     /**
      * Order Now
@@ -38,13 +38,14 @@ class DonationController extends Controller
             'quantity'      => 'required|numeric|gt:0',
             'service_id'    => 'required|exists:services,id|integer',
             'phone'         => ['required', 'regex:/^((05))[0-9]{8}$/'],
-            'status'        => 'nullable',
+            // 'status'        => 'nullable',
             'payment_ways'  => 'required|in:credit_card,bank_transfer',
             'payment_brand' => 'nullable',
             'order_type'    => 'required|in:service,gift,quick',
             'branch_id'     => 'nullable',
-            'response'      => 'nullable',
+            // 'response'      => 'nullable',
         ]);
+
 
         if ($validator->fails()) {
             return response()->api(null, 200, true, $validator->errors()->first());
@@ -55,36 +56,29 @@ class DonationController extends Controller
 
         $service    = Service::orderBy('id', 'DESC')->whereId($request->service_id)
                                 ->active()->with('service_section')->first();
+
         if ($service && $service->service_section->status === 'active') {
             $phone  = preg_replace("/^966/", "0", $request->phone);
-
-            if ($this->isJson($request->response)) {
-                $json_response = json_decode($request->response);
-                $status = $json_response !== null && isset($json_response->responseCode) && $json_response->responseCode == '000' ? 'paid' : 'unpaid';
-                $total_amount = $json_response !== null && isset($json_response->amount) ? (float) str_replace(',', '', $json_response->amount) : ((float) str_replace(',', '', $request->total_amount) ?? 0);
-            } else {
-                $status = 'unpaid';
-                $total_amount = is_numeric((float) str_replace(',', '', $request->total_amount)) ? (float) str_replace(',', '', $request->total_amount) : 0;
-            }
+            $status = 'pending';
+            $total_amount = is_numeric((float) str_replace(',', '', $request->total_amount)) ? (float) str_replace(',', '', $request->total_amount) : 0;
 
             $request->merge([
                 'status' => $status,
                 'total_amount' => $total_amount
             ]);
 
+
             if (Donor::where('phone', '=', $phone)->exists()) {
                 $donor = Donor::where('phone', '=', $phone)->first();
-
                 try {
                     DB::beginTransaction();
                         $donation                   = new Donation();
                         $donation->donor_id         = $donor->id ?? auth()->user()->id;
                         $donation->total_amount     = intval($request->total_amount);
-                        $donation->status           = $request->status ?? 'paid';
+                        $donation->status           = 'pending';
                         $donation->payment_ways     = $request->payment_ways == 'bank_transfer' ? 'bank_transfer' : 'credit_card';
                         $donation->payment_brand    = $request->payment_brand ?? 'None';
                         $donation->branch_id        = $request->branch_id;
-                        $donation->response         = $request->response;
                         $donation->save();
 
                         $donation_service               = new DonationService();
@@ -99,7 +93,8 @@ class DonationController extends Controller
                             'donor_phone'               => $phone,
                             'donor_id'                  => auth()->user()->id ?? $donor->id,
                             'total_amount'              => $donation->total_amount,
-                            'is_paid'                   => $donation->status == 'paid' ? true : false,
+                            'status'                    => $donation->status,
+                            'is_paid'                   => false,
                             'message'                   => $donation->status == 'paid' ? $succ_msg : $fail_msg
                         ];
 
@@ -143,7 +138,8 @@ class DonationController extends Controller
                         'donor_phone'               => $phone,
                         'donor_id'                  => auth()->user()->id ?? $donor->id,
                         'total_amount'              => $donation->total_amount,
-                        'is_paid'                   => $donation->status == 'paid' ? true : false,
+                        'status'                    => $donation->status,
+                        'is_paid'                   => false,
                         'message'                   => $donation->status == 'paid' ? $succ_msg : $fail_msg
                     ];
 
@@ -158,6 +154,46 @@ class DonationController extends Controller
             return response()->api($response, 200, false, $message);
         }
         return response()->api(null, 200, true, __('api.not found data'));
+    }
+
+    /**
+     * Update Order
+     */
+    public function updateOrder(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'status'        => 'nullable',
+            'order_id'      => 'required|exists:donations,id|integer',
+            'response'      => 'required|json',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->api(null, 200, true, $validator->errors()->first());
+        }
+
+        $order = Donation::whereId($request->order_id)->first();
+
+        if ($this->isJson($request->response)) {
+            $json_response = json_decode($request->response);
+            $status = $json_response !== null && isset($json_response->responseCode) && $json_response->responseCode == '000' ? 'paid' : 'unpaid';
+        } else {
+            $status = 'unpaid';
+        }
+
+
+        $order->update([
+            'status'    => $status,
+            'response'  => $request->response,
+        ]);
+
+        $response = [
+            'order_id'  => $order->id,
+            'status'    => $order->status,
+            'message'   => $order->status == 'paid' ? 'تم عملية الدفع بنجاح, الرجاء الإنتظار' : 'عملية مرفوضة, الرجاء المحاولة مرة اخرى'
+        ];
+
+        return response()->api($response, 200, false, __('api.Successful operation'));
     }
 
 

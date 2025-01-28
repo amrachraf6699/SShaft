@@ -364,23 +364,29 @@
                 $("#multiDiv").hide();
             }
         });
-
-        $('.select2-select').select2({
-            placeholder: '@lang('translation.select')',
-        });
-
-        $('.branchSelect').select2({
-            placeholder: "اختر الفرع"
-        });
-
-        var selectedBranches = $('#branchHiddenInput').val().split(',');
-        $('.branchSelect').val(selectedBranches).trigger('change');
-
-        $('.branchSelect').on('change', function() {
-            var selectedValues = $(this).val();
-            $('#branchHiddenInput').val(selectedValues.join(','));
-        });
-
     });
 </script>
+<script>
+    $('.branchSelect').select2({
+        placeholder: "اختر الفرع"
+    });
+
+    var selectedBranches = $('#branchHiddenInput').val().split(',').filter(Boolean);
+    $('.branchSelect').val(selectedBranches).trigger('change');
+
+    $('.branchSelect').on('change', function() {
+        var $select = $(this);
+        var selectedValues = $select.val() || [];
+
+        $('#branchHiddenInput').val(selectedValues.join(','));
+
+        selectedValues.forEach(function(value) {
+            $select.find(`option[value="${value}"]`).prop('disabled', true);
+        });
+
+        $select.select2({
+            placeholder: "اختر الفرع"
+        });
+    });
+    </script>
 @endsection

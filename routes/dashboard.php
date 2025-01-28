@@ -185,6 +185,9 @@ Route::prefix(RouteServiceProvider::DASHBOARD)->name('dashboard.')->middleware([
     Route::delete('/verification-donations/destroy/all', 'VerificationDonationController@multiDelete')->name('verification-donations.destroy_all');
     Route::get('/verification-donations/export', 'VerificationDonationController@export')->name('verification-donations.export');
 
+    Route::resource('/pending-donations', 'PendingDonationController')->except(['create', 'store', 'show']);
+    Route::delete('/pending-donations/destroy/all', 'PendingDonationController@multiDelete')->name('pending-donations.destroy_all');
+    Route::get('/pending-donations/export', 'PendingDonationController@export')->name('pending-donations.export');
     // Beneficiaries requests
     Route::resource('/beneficiaries-requests', 'BeneficiariesRequestController')->except(['show']);
     Route::delete('/beneficiaries-requests/destroy/all', 'BeneficiariesRequestController@multiDelete')->name('beneficiaries-requests.destroy_all');

@@ -29,11 +29,11 @@ class SliderRequest extends FormRequest
                 // 'button'            =>  'required|string',
                 'url'               =>  'sometimes|nullable|url',
                 'status'            =>  'required|in:active,inactive',
-                'quick_donation'    =>  'required|in:yes,no',
+                // 'quick_donation'    =>  'required|in:yes,no',
                 'service_id'        =>  'required_if:quick_donation,yes|sometimes|nullable|exists:services,id|integer',
-                'img'               =>  'required|mimes:jpg,jpeg,png|max:20000',
+                'img'               =>  'required|mimes:jpg,jpeg,png,mp4|max:20000',
                 'type'              =>  'nullable',
-                'branch_id'         =>  'required',
+                'branch_id'         =>  'nullable',
 
             ];
         } else {
@@ -42,11 +42,11 @@ class SliderRequest extends FormRequest
                 // 'button'            =>  'required|string',
                 'url'               =>  'sometimes|nullable|url',
                 'status'            =>  'required|in:active,inactive',
-                'quick_donation'    =>  'required|in:yes,no',
+                // 'quick_donation'    =>  'required|in:yes,no',
                 'service_id'        =>  'required_if:quick_donation,yes|sometimes|nullable|exists:services,id|integer',
-                'img'               =>  'sometimes|required|mimes:jpg,jpeg,png|max:20000',
+                'img'               =>  'sometimes|required|mimes:jpg,jpeg,png,mp4|max:20000',
                 'type'              =>  'nullable',
-                'branch_id'         =>  'required',
+                'branch_id'         =>  'nullable',
             ];
         }
     }

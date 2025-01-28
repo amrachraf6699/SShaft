@@ -27,7 +27,7 @@ class ServiceRequest extends FormRequest
             return [
                 'title'                         =>  'required|string|unique:services,title',
                 'service_section_id'            =>  'required|exists:service_sections,id|integer',
-                'branch_id'                    =>  'nullable|exists:services,id|integer',
+                'branch_id'                    =>   'nullable|exists:services,id|integer',
                 'how_does_the_service_work'     =>  'required|string|min:20',
                 'content'                       =>  'required|string|min:20',
                 'quick_donation'                =>  'required|in:unlisted,included',
@@ -49,6 +49,7 @@ class ServiceRequest extends FormRequest
             return [
                 'title'                         =>  'required|string|unique:services,title,'.$this->service,
                 'service_section_id'            =>  'required|exists:service_sections,id|integer',
+                'branch_id'                    =>   'nullable|exists:services,id',
                 'how_does_the_service_work'     =>  'required|string|min:20',
                 'content'                       =>  'required|string|min:20',
                 'quick_donation'                =>  'required|in:unlisted,included',

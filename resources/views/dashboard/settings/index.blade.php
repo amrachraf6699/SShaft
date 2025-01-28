@@ -482,7 +482,7 @@
                                 <div class="d-flex justify-content-between align-items-center mb-4">
                                     <div class="main-content-label">@lang('dashboard.advanced_settings')</div>
                                     <span class="badge badge-primary" style="background-color: #007bff;">
-                                        @lang('dashboard.last_online_at'): 
+                                        @lang('dashboard.last_online_at'):
                                         {{ $setting->last_online_at ? Carbon\Carbon::parse($setting->last_online_at)->diffForHumans() : 'N/A' }}
                                     </span>
                                 </div>
@@ -512,7 +512,7 @@
                                                 @error('refresh_time')<span class="text-danger">{{ $message }}</span>@enderror
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <div class="form-group">
                                                 {!! Form::label('pinned_mode', trans('dashboard.pinned_mode')) !!}
                                                 <div>
@@ -529,7 +529,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <div class="form-group">
                                                 {!! Form::label('quick_donations', trans('dashboard.quick_donations')) !!}
                                                 <div>
@@ -543,6 +543,56 @@
                                                     </label>
                                                 </div>
                                                 @error('quick_donations')<span class="text-danger">{{ $message }}</span>@enderror
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                {!! Form::label('show_last_online_at', trans('dashboard.show_last_online_at')) !!}
+                                                <div>
+                                                    <label>
+                                                        {!! Form::radio('show_last_online_at', 1, $setting->show_last_online_at == 1) !!}
+                                                        @lang('dashboard.enabled')
+                                                    </label>
+                                                    <label>
+                                                        {!! Form::radio('show_last_online_at', 0, $setting->show_last_online_at == 0) !!}
+                                                        @lang('dashboard.disabled')
+                                                    </label>
+                                                </div>
+                                                @error('show_last_online_at')<span class="text-danger">{{ $message }}</span>@enderror
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                {!! Form::label('branch_in_slider', trans('dashboard.branch_in_slider')) !!}
+                                                <div>
+                                                    <label>
+                                                        {!! Form::radio('branch_in_slider', 1, $setting->branch_in_slider == 1) !!}
+                                                        @lang('dashboard.enabled')
+                                                    </label>
+                                                    <label>
+                                                        {!! Form::radio('branch_in_slider', 0, $setting->branch_in_slider == 0) !!}
+                                                        @lang('dashboard.disabled')
+                                                    </label>
+                                                </div>
+                                                @error('branch_in_slider')<span class="text-danger">{{ $message }}</span>@enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                {!! Form::label('branch_in_service', trans('dashboard.branch_in_service')) !!}
+                                                <div>
+                                                    <label>
+                                                        {!! Form::radio('branch_in_service', 1, $setting->branch_in_service == 1) !!}
+                                                        @lang('dashboard.enabled')
+                                                    </label>
+                                                    <label>
+                                                        {!! Form::radio('branch_in_service', 0, $setting->branch_in_service == 0) !!}
+                                                        @lang('dashboard.disabled')
+                                                    </label>
+                                                </div>
+                                                @error('branch_in_service')<span class="text-danger">{{ $message }}</span>@enderror
                                             </div>
                                         </div>
 
